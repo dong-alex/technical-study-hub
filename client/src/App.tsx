@@ -1,7 +1,14 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
+import LoginPage from "./components/login/LoginPage";
 
-function App() {
-  return <div />;
-}
+type AppProps = {};
+
+const App: FunctionComponent<AppProps> = () => {
+  return (
+    <>
+      <LoginPage />
+    </>
+  );
+};
 
 export default App;
