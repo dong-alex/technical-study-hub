@@ -1,45 +1,18 @@
-# Express API Starter
+# Express MongoDB Server
 
-Includes API Server utilities:
+A server used to support the operations of storing the questions and any details used in them for your personal needs.
 
-* [morgan](https://www.npmjs.com/package/morgan)
-  * HTTP request logger middleware for node.js
-* [helmet](https://www.npmjs.com/package/helmet)
-  * Helmet helps you secure your Express apps by setting various HTTP headers. It's not a silver bullet, but it can help!
-* [dotenv](https://www.npmjs.com/package/dotenv)
-  * Dotenv is a zero-dependency module that loads environment variables from a `.env` file into `process.env`
+To run locally
+1. ```yarn install```
+2. ```Update MongoDB Atlas credentials```
+3. ```yarn start```
 
-Development utilities:
+# Requirements
 
-* [nodemon](https://www.npmjs.com/package/nodemon)
-  * nodemon is a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
-* [eslint](https://www.npmjs.com/package/eslint)
-  * ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
-* [mocha](https://www.npmjs.com/package/mocha)
-  * ☕️ Simple, flexible, fun JavaScript test framework for Node.js & The Browser ☕️
-* [supertest](https://www.npmjs.com/package/supertest)
-  * HTTP assertions made easy via superagent.
-
-## Setup
-
-```
-npm install
-```
-
-## Lint
-
-```
-npm run lint
-```
-
-## Test
-
-```
-npm run test
-```
-
-## Development
-
-```
-npm run dev
-```
+- [x] Base questions API
+- [] Proper validation
+- [] Implement image processing and storage for questions (Web scraping would require external computing resources)
+- [] Basic testing
+- [] Filter queries within API
+- [] Refactoring
+- [] Deploy publicly
