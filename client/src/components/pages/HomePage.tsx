@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react";
-import NavigationLayout from "../navigation/NavigationLayout";
+import NavigationLayout from "../layout/NavigationLayout";
 import "../../sass/homePage.scss";
 
 type HomePageProps = {};
