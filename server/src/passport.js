@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const User = require("./models/User");
 var passport = require("passport"),
   JwtStrategy = require("passport-jwt").Strategy,
@@ -11,7 +13,9 @@ opts.secretOrKey = process.env.SECRET_KEY;
 // authorizing requests
 passport.use(
   new JwtStrategy(opts, (jwtPayload, done) => {
-    User.findOne({ _id: jwtPayload.sub })
+    console.log("JWT Authorization");
+
+    User.findById(jwtPayload.sub)
       .then((user) => {
         if (user) {
           done(null, user);
