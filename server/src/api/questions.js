@@ -1,108 +1,88 @@
 require("dotenv").config();
 
 const express = require("express");
-const { v4: uuidv4 } = require("uuid");
-const { MongoClient } = require("mongodb");
-const { OAuth2Client } = require("google-auth-library");
-
 const router = express.Router();
-const username = encodeURIComponent(process.env.MONGO_USER);
-const password = encodeURIComponent(process.env.MONGO_PASS);
-const uri = `mongodb+srv://${username}:${password}@leetcode-notes.ybgks.mongodb.net/${process.env.MONGOOSE_DB_NAME}?retryWrites=true&w=majority`;
-const client = new MongoClient(uri, { useUnifiedTopology: true });
-const authClient = new OAuth2Client(
-  "35960364936-tpope03b2cvd778q4ntokamgh71kqd9i.apps.googleusercontent.com"
+const mongoose = require("mongoose");
+const client = require("../database");
+const passport = require("../passport");
+const Tag = require("../models/Tag");
+const Question = require("../models/Question");
+
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  (req, res, next) => {
+    console.log(req.user);
+    Question.find(
+      { userId: mongoose.Types.ObjectId(req.user._id) },
+      (err, docs) => {
+        if (err) {
+          next(err);
+        } else {
+          res.json({
+            message: "Succesfully obtained all questions for the user",
+            questions: docs,
+            user: req.user._id,
+          });
+        }
+      }
+    ).populate("tags");
+  }
 );
 
-const FBAuth = async (req, res, next) => {
-  console.log("Authenticating request");
-  // console.log(req.headers.authorization);
-  // console.log(req.headers);
-  let idToken;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer ")
-  ) {
-    idToken = req.headers.authorization.split("Bearer ")[1];
-  } else {
-    // No cookie
-    res.status(403).send("Unauthorized");
-    return;
-  }
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  async (req, res, next) => {
+    try {
+      // customized based on request body - requires some kind of ID - can be generated
+      const newQuestion = new Question({
+        name: req.body.name,
+        difficulty: req.body.difficulty,
+        tags: req.body.tags,
+        userId: mongoose.Types.ObjectId(req.user._id),
+      });
 
-  // https://github.com/firebase/functions-samples/blob/Node-8/authorized-https-endpoint/functions/index.js
-  try {
-    const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    console.log("ID Token correctly decoded", decodedIdToken);
-    req.user = decodedIdToken;
-    next();
-    return;
-  } catch (err) {
-    console.error("Error while verifying Firebase ID token:", err);
-    res.status(403).send("Unauthorized");
-    return;
-  }
-};
-
-router.get("/", async (req, res, next) => {
-  try {
-    await client.connect();
-    const db = client.db("questions");
-    // _id: 0 will ignore the field, setting a field to 1 will return that specifid field
-    const cursor = db
-      .collection("leetcode")
-      .find({ difficulty: "EASY" })
-      .project({ _id: 0 });
-    const response = await cursor.toArray();
-
-    res.json({
-      message: "Succesfully obtained all questions",
-      questions: response,
-    });
-  } catch (err) {
-    next(err);
-  } finally {
-    await client.close();
-  }
-});
-
-router.post("/", async (req, res, next) => {
-  try {
-    // parse the request body for the information - should be validated in front-end too
-    if (
-      !req.body.name ||
-      !req.body.difficulty ||
-      !req.body.notes ||
-      !req.body.labels
-    ) {
-      throw new Error("Invalid parameters, please try again");
+      const document = await newQuestion.save();
+      res.json({
+        message: "Succesfully added the following question into the database",
+        question: document,
+      });
+    } catch (err) {
+      console.log(err);
+      next(err);
     }
-
-    // insert the new question into the proper collection
-    await client.connect();
-    const db = client.db("questions");
-    const col = db.collection("leetcode");
-
-    // customized based on request body - requires some kind of ID - can be generated
-    const questionDocument = {
-      _id: uuidv4(),
-      name: req.body.name,
-      difficulty: req.body.difficulty,
-      notes: req.body.notes,
-      labels: req.body.labels,
-    };
-
-    await col.insertOne(questionDocument);
-
-    res.json({
-      message: "Succesfully added the following question into the database",
-      question: questionDocument,
-    });
-  } catch (err) {
-    next(err);
-  } finally {
-    await client.close();
   }
-});
+);
+
+router.put(
+  "/tag/:questionId",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  async (req, res, next) => {
+    // add the tag into the specific questionId
+    console.log(req.params.questionId);
+    const tag = new Tag({
+      tagName: req.body.name,
+      tagColor: req.body.color,
+      userId: mongoose.Types.ObjectId(req.user._id),
+    });
+
+    const document = await tag.save();
+
+    Question.findById(req.params.questionId, async (err, docs) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(docs);
+        docs.tags = [...docs.tags, mongoose.Types.ObjectId(tag._id)];
+        await docs.save();
+        console.log(docs);
+        res.status(200).json({
+          message: "Updated the question with a new tag",
+        });
+      }
+    });
+  }
+);
 
 module.exports = router;
