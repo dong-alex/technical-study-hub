@@ -1,0 +1,39 @@
+$login-background: #ffffff;
+$google-login-background: #eeeeee;
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+
+// Tablets and small desktops
+$screen-lg-min: 992px;
+
+// Large tablets and desktops
+$screen-xl-min: 1200px;
+
+#login-page {
+  background-color: $login-background;
+  height: 100%;
+}
+
+$login-border-radius: 2rem;
+$login-border-padding: 1.5rem;
+$login-border-margin: 1rem;
+
+#login-container {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  padding: $login-border-padding;
+
+  #google-login {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    padding: $login-border-padding;
+    margin: $login-border-margin 0.5rem $login-border-margin 0.5rem;
+    border-radius: $login-border-radius;
+  }
+}
