@@ -28,7 +28,7 @@ router.post("/register", async (req, res, next) => {
 
         return res.status(200).json({
           message: "New user registered. Please login",
-          user: document,
+          data: document,
         });
       } catch (err) {
         return res.status(422).json({
@@ -45,8 +45,11 @@ router.post(
   (req, res, next) => {
     // returns a JWT after approval
     return res.json({
-      user: req.user,
-      token: req.user.generateVerificationToken(),
+      message: "Login successful!",
+      data: {
+        user: req.user,
+        token: req.user.generateVerificationToken(),
+      },
     });
   }
 );
@@ -56,7 +59,10 @@ router.get(
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
     return res.json({
-      user: req.user,
+      message: "Obtained user information",
+      data: {
+        user: req.user,
+      },
     });
   }
 );

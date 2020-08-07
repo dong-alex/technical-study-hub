@@ -4,7 +4,6 @@ const QuestionSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   image: {
     data: Buffer,
