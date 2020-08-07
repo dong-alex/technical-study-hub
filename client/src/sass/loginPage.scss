@@ -13,27 +13,27 @@ $screen-lg-min: 992px;
 // Large tablets and desktops
 $screen-xl-min: 1200px;
 
-#login-page {
-  background-color: $login-background;
+.login-container {
   height: 100%;
+  width: 100%;
 }
 
-$login-border-radius: 2rem;
-$login-border-padding: 1.5rem;
-$login-border-margin: 1rem;
-
-#login-container {
+.form {
   display: flex;
   flex-direction: column;
-  place-items: center;
-  padding: $login-border-padding;
 
-  #google-login {
-    display: flex;
-    flex-direction: column;
-    place-items: center;
-    padding: $login-border-padding;
-    margin: $login-border-margin 0.5rem $login-border-margin 0.5rem;
-    border-radius: $login-border-radius;
+  h4 {
+    text-align: center;
   }
+
+  .button-section {
+    padding: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+}
+
+.register-button .login-button {
+  margin: 2rem;
 }
