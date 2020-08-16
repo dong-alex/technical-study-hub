@@ -5,89 +5,89 @@ $bg-secondary: #0091ea;
 $transition-speed: 600ms;
 
 .main-navbar {
-	padding-left: 1rem;
+  padding-left: 1rem;
 }
 
 .app-shell {
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
 
-	::-webkit-scrollbar {
-		width: 0.25rem;
-	}
+  ::-webkit-scrollbar {
+    width: 0.25rem;
+  }
 
-	::-webkit-scrollbar-track {
-		background: #181cfb;
-	}
+  ::-webkit-scrollbar-track {
+    background: #181cfb;
+  }
 }
 
 .sticky-navigation {
-	padding: 1rem;
-	grid-column: 1/4;
-	color: #fff;
-	background-color: black;
+  padding: 1rem;
+  grid-column: 1/4;
+  color: #fff;
+  background-color: black;
 }
 
 .sticky-footer {
-	grid-column: 1/4;
-	color: #fff;
-	background-color: black;
+  grid-column: 1/4;
+  color: #fff;
+  background-color: black;
 }
 
 .left-side {
-	padding: 0px !important;
-	margin: 0px;
-	height: 100vh;
-	list-style: none;
-	border-bottom-right-radius: 1rem;
-	ul {
-		margin: 0px;
-		padding: 0px;
-		width: 100%;
-	}
-	li {
-		width: 100%;
-		user-select: none;
-		cursor: pointer;
-		text-decoration: none;
-		padding: 0.5rem 0.5rem 0.5rem 1rem;
-		color: #fff;
-		text-decoration: none;
-		// filter: grayscale(100%) opacity(0.7);
-		transition: $transition-speed;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 0px !important;
+  margin: 0px;
+  height: 100vh;
+  border-bottom-right-radius: 1rem;
+  a {
+    color: #fff;
+  }
+  .sidebar-nav {
+    width: 100%;
+    user-select: none;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 1rem;
+    text-decoration: none;
+    // filter: grayscale(100%) opacity(0.7);
+    transition: $transition-speed;
 
-		&:hover {
-			// filter: grayscale(0%) opacity(1);
-			background: $bg-secondary;
-			color: $text-secondary;
-		}
-	}
+    &:hover {
+      // filter: grayscale(0%) opacity(1);
+      background: $bg-secondary;
+      color: $text-secondary;
+    }
+  }
 }
 
 .right-side {
-	background-color: #616161;
-	grid-column: 3/4;
+  background-color: #616161;
+  grid-column: 3/4;
 }
 
 .middle {
-	grid-column: 2/3;
-	padding: 0 1rem 0 1rem;
+  grid-column: 2/3;
+  padding: 0 1rem 0 1rem;
 }
 
 .main-content {
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	width: auto;
-	flex-wrap: wrap;
-	overflow-wrap: break-word;
-	overflow-y: scroll;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  flex-wrap: wrap;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
 }
 
 @media (max-width: 768px) {
-	.brand-logo {
-		font-size: 1rem !important;
-	}
+  .brand-logo {
+    font-size: 1rem !important;
+  }
 }
