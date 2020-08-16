@@ -12,11 +12,51 @@ router.get(
       if (err) {
         next(err);
       } else {
-        res.status(200).send({
+        return res.status(200).send({
           message: "Succesfully obtained all tags by user",
-          data: docs,
+          tags: docs,
         });
-        next();
+      }
+    });
+  }
+);
+
+router.post(
+  "/",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  (req, res, next) => {
+    Tag.findOne({ tagName: req.body.tagName }, async (err, tag) => {
+      if (err) {
+        console.log(err);
+        next(err);
+      }
+
+      if (tag) {
+        console.log("Duplicate");
+        return res.status(422).json({
+          message:
+            "There is a tag name that exists - please try a different name.",
+        });
+      }
+
+      let newTag = new Tag({
+        tagName: req.body.tagName,
+        tagColor: req.body.tagColor,
+        userId: req.user._id,
+      });
+
+      try {
+        const document = await newTag.save();
+
+        return res.status(200).json({
+          message: "New tag registered",
+          tag: document,
+        });
+      } catch (err) {
+        console.log("Save error", err.message);
+        return res.status(422).json({
+          message: "There was an error saving your new tag. Please try again.",
+        });
       }
     });
   }

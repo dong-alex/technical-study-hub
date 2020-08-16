@@ -16,7 +16,7 @@ const tagSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  date: {
+  createdDate: {
     type: Date,
     default: Date.now,
   },
