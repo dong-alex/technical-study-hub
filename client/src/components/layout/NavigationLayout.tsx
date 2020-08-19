@@ -4,11 +4,18 @@ import "materialize-css";
 import { Navbar, NavItem, Icon, Row, Col } from "react-materialize";
 // import MenuLogo from "../../assets/sidebar-menu.svg";
 import { NavLink } from "react-router-dom";
+import styled from "styled-components";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
 
 type NavigationLayoutProps = {
   children: any;
 };
+
+const MainContainer = styled.div`
+  margin: 1rem;
+  height: 100%;
+  width: 100%;
+`;
 
 const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
   children,
@@ -51,7 +58,7 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
             </NavLink>
           </Col>
           <Col s={9} m={8} l={10} className="main-content">
-            {children}
+            <MainContainer>{children}</MainContainer>
           </Col>
         </Row>
       </div>

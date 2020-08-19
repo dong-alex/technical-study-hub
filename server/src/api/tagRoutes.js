@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const passport = require("../passport");
 const Tag = require("../models/Tag");
+const e = require("express");
 
 router.get(
   "/",
@@ -62,6 +63,52 @@ router.post(
   }
 );
 
+router.put(
+  "/",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  (req, res, next) => {
+    Tag.findOneAndUpdate(
+      { _id: req.body.tagId },
+      { tagName: req.body.tagName, tagColor: req.body.tagColor },
+      { upsert: true },
+      async (err, tag) => {
+        if (err) {
+          console.log(err);
+          next(err);
+        }
+
+        if (tag) {
+          return res.status(200).json({
+            message: "Tag has been updated",
+            tag: tag,
+          });
+        }
+      }
+    );
+  }
+);
+
+router.delete(
+  "/:tagId",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  (req, res, next) => {
+    Tag.findByIdAndDelete(req.params.tagId, {}, async (err, success) => {
+      if (err) {
+        console.log(err);
+        next(err);
+      }
+
+      if (success) {
+        return res.status(200).json({
+          message: "Tag has been deleted",
+          success: success,
+        });
+      } else {
+        console.log(success);
+      }
+    });
+  }
+);
 // router.put(
 //   "/tag/:questionId",
 //   passport.authenticate("jwt", { session: false, failWithError: true }),

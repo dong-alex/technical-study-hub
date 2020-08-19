@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-const usePagination = () => {
+const usePagination = (maximumPages: number) => {
   const [page, setPage] = useState<number>(1);
 
   const handlePageDown = () => {
-    setPage(page - 1);
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   const handlePageUp = () => {
-    setPage(page + 1);
+    if (page < maximumPages - 1) {
+      setPage(page + 1);
+    }
   };
 
   return { page, handlePageDown, handlePageUp };

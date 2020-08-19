@@ -75,15 +75,29 @@ export const AuthenticationProvider: FunctionComponent = ({ children }) => {
     } else {
       console.log("Cookie found but no user!");
     }
-
-    setLoaded(true);
     return user;
   };
 
   useEffect(() => {
-    fetchUser();
+    // no user found
+    fetchUser().then((fetchedUser) => {
+      if (fetchedUser) {
+        console.log("Found user via token");
+      } else {
+        console.log("No token or user found.");
+      }
+      setLoaded(true);
+    });
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+    }
+	}, [token]);
+	
   useEffect(() => {
     setAuthenticated(user !== null && token !== "");
   }, [user, token]);

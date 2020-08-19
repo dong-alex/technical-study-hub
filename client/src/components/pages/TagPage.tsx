@@ -2,74 +2,32 @@ import React, {
   FunctionComponent,
   useState,
   useEffect,
-  useMemo,
   ChangeEvent,
-  useCallback,
 } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Table,
-  TextInput,
-  Dropdown,
-  Pagination,
-  Icon,
-} from "react-materialize";
+import { NavLink, Redirect, RouteComponentProps } from "react-router-dom";
+import { Row, Col, Button, TextInput, Dropdown, Icon } from "react-materialize";
 import { CirclePicker } from "react-color";
-import styled from "styled-components";
-import { Tag } from "../../hooks/reducers/tagsReducer";
-import NavigationLayout from "../layout/NavigationLayout";
-import useTags from "../../hooks/useTags";
-import usePagination from "../../hooks/usePagination";
 
-type TagPageProps = {};
+import styled from "styled-components";
+import NavigationLayout from "../layout/NavigationLayout";
+import { Tag } from "../../hooks/reducers/tagsReducer";
+import useTags from "../../hooks/useTags";
+
+type TagParams = { id: string };
 type ColorPreviewProps = {
   backgroundColor: string;
 };
 
-const TagMainPage = styled.div`
-  margin: 1rem;
-`;
-
-const TagNameInput = styled(TextInput)`
-  width: 100%;
-  height: 30px;
-`;
-
-const TableTagColor = styled.td`
-  > div {
-    background-color: ${(props: ColorPreviewProps) => props.backgroundColor};
-    margin: 0 auto 0 auto;
-    width: 20px;
-    height: 20px;
-  }
-`;
-
-const CustomPagination = styled(Pagination)`
-  height: 100%;
+const Header = styled.div`
   display: flex;
-  justify-content: center;
-  > li {
-    &:first-child {
-      padding: 0px;
-      width: auto;
-      height: auto;
-    }
-    &:last-child {
-      padding: 0px;
-      width: auto;
-      height: auto;
-    }
+  place-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+`;
 
-    > a {
-      padding: 0;
-    }
-
-    max-width: 200px;
-    padding: 0 1rem 0 1rem;
-    margin: 0 1rem 0 1rem;
-  }
+const Title = styled.h4`
+  margin: 0 0 0 0.5rem;
+  user-select: none;
 `;
 
 const ColorPreview = styled.div`
@@ -83,8 +41,9 @@ const ColorPreview = styled.div`
   }
 `;
 
-const PageButton = styled(Button)`
+const TagNameInput = styled(TextInput)`
   width: 100%;
+  height: 30px;
 `;
 
 const TagForm = styled(Row)`
@@ -100,117 +59,92 @@ const ColorDropdown = styled(Dropdown)`
   width: 300px !important;
 `;
 
-const TagPage: FunctionComponent<TagPageProps> = () => {
-  const { page, handlePageUp, handlePageDown } = usePagination();
-  const { tags, createTag } = useTags();
-  const [tableTags, setTableTags] = useState<Tag[]>([]);
-  const [tagName, setTagName] = useState<string>("");
-  const [tagColor, setTagColor] = useState<string>("#AAA");
+interface TagPageProps extends RouteComponentProps<TagParams> {}
+
+// singular tag overview page
+const TagPage: FunctionComponent<TagPageProps> = ({
+  match: {
+    params: { id: tagId },
+  },
+}: TagPageProps) => {
+  const { tags, updateTag } = useTags();
+  const [currentTagName, setCurrentTagName] = useState<string>("");
+  const [currentTagColor, setCurrentTagColor] = useState<string>("#AAA");
 
   useEffect(() => {
-    console.log("Page Number: ", page);
-  }, [page]);
+    console.log("TagPage ID: ", tagId);
 
-  useEffect(() => {
-    console.log("Obtained tags", tags);
-    // depending on the page - set the tags 10 at a time per page
-    const offset = (page - 1) * 2;
-    const displayTags = tags.slice(offset, offset + 2);
-    setTableTags(displayTags);
-  }, [tags, page]);
+    // grab the corresponding tag details
+    if (tagId && tags.length > 0) {
+      console.log(tags);
+      const specificTag: Tag | undefined = tags.find(
+        (tag: Tag) => tag._id === tagId
+      );
+
+      if (specificTag) {
+        const { tagName, tagColor } = specificTag;
+        setCurrentTagName(tagName);
+        setCurrentTagColor(tagColor);
+      } else {
+        // these errors should not be hit
+        throw new Error("Tags empty or TagID invalid");
+      }
+      // set the current UI with these details
+    }
+  }, [tags, tagId]);
 
   const handleColorChange = ({ hex }: { hex: string }) => {
-    setTagColor(hex);
+    setCurrentTagColor(hex);
   };
 
   // TODO: validation with the string length of total # tags
   const handleTagNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTagName(event.target.value);
+    setCurrentTagName(event.target.value);
   };
 
-  const handleAddTag = async (event: any) => {
-    event.preventDefault();
-    let success = false;
-    try {
-      success = await createTag(tagName, tagColor);
-      return success;
-    } catch (err) {
-      return success;
-    }
+  const handleUpdateTag = async () => {
+    await updateTag(tagId, currentTagName, currentTagColor);
   };
-
-  useEffect(() => {
-    console.log(tagColor);
-  }, [tagColor]);
 
   return (
     <NavigationLayout>
-      <TagMainPage>
-        <TagForm>
-          <Col s={10} m={7}>
-            <TagNameInput
-              name="tagName"
-              label="Tag Name"
-              noLayout
-              onChange={handleTagNameChange}
-              value={tagName}
+      <Header>
+        <NavLink to="/tags">
+          <Button floating icon={<Icon>chevron_left</Icon>} />
+        </NavLink>
+        <Title>Tag Details</Title>
+      </Header>
+      <h6>Update Your Tag</h6>
+      <TagForm>
+        <Col s={10} m={7}>
+          <TagNameInput
+            name="tagName"
+            label="Tag Name"
+            noLayout
+            onChange={handleTagNameChange}
+            value={currentTagName}
+          />
+        </Col>
+        <Col s={2} m={1}>
+          <ColorDropdown
+            trigger={<ColorPreview backgroundColor={currentTagColor} />}
+          >
+            <CirclePicker
+              color={currentTagColor}
+              onChangeComplete={handleColorChange}
             />
-          </Col>
-          <Col s={2} m={1}>
-            <ColorDropdown
-              trigger={<ColorPreview backgroundColor={tagColor} />}
-            >
-              <CirclePicker
-                color={tagColor}
-                onChangeComplete={handleColorChange}
-              />
-            </ColorDropdown>
-          </Col>
-          <Col s={12} m={4}>
-            <Button className="light-blue lighten-2" onClick={handleAddTag}>
-              Add Tag
-            </Button>
-          </Col>
-        </TagForm>
-        <Table>
-          <thead>
-            <tr>
-              <th data-field="id">Tag Name</th>
-              <th data-field="name">Tag Color</th>
-              <th data-field="price">Created On</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableTags.map((tag: Tag) => {
-              return (
-                <tr key={tag._id}>
-                  <td>{tag.tagName}</td>
-                  <TableTagColor backgroundColor={tag.tagColor}>
-                    <div />
-                  </TableTagColor>
-                  <td>{tag.createdDate}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-        <CustomPagination
-          activePage={page}
-          items={1 + tags.length / 2}
-          leftBtn={
-            <PageButton
-              onClick={handlePageDown}
-              icon={<Icon>chevron_left</Icon>}
-            />
-          }
-          rightBtn={
-            <PageButton
-              onClick={handlePageUp}
-              icon={<Icon>chevron_right</Icon>}
-            />
-          }
-        />
-      </TagMainPage>
+          </ColorDropdown>
+        </Col>
+        <Col s={12} m={4}>
+          <Button
+            className="light-blue lighten-2 hoverable"
+            onClick={handleUpdateTag}
+            waves="light"
+          >
+            Save Tag
+          </Button>
+        </Col>
+      </TagForm>
     </NavigationLayout>
   );
 };

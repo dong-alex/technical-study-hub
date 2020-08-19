@@ -8,10 +8,12 @@ const useTags = () => {
   const { user, token } = useAuthProvider();
 
   const [tags, setTags] = useState<Tag[]>([]);
+  const [loadingTags, setLoadingTags] = useState<boolean>(true);
 
   useEffect(() => {
     const fetch = async () => {
-      const data = await getTags();
+      await getTags();
+      setLoadingTags(false);
     };
     fetch();
   }, []);
@@ -40,9 +42,36 @@ const useTags = () => {
   };
 
   // TODO: update the tag information - needs to be given the ID to change
-  const updateTag = async (tagId: string) => {};
+  const updateTag = async (
+    tagId: string,
+    newTagName: string,
+    newTagColor: string
+  ) => {
+    if (tagId === "") {
+      throw new Error("Empty tag name. Please try again.");
+    }
 
-  // TODO: tag information to create a new tag such as name and color
+    if (!user || !token) {
+      throw new Error("No user found. Please try again.");
+    }
+
+    try {
+      const {
+        data: { tag },
+      } = await axios.put("/api/v1/tags", {
+        tagId,
+        tagName: newTagName,
+        tagColor: newTagColor,
+      });
+      console.log(tag);
+
+      return tag;
+    } catch (err) {
+      console.log(err.message);
+      throw err;
+    }
+  };
+
   const createTag = async (tagName: string, tagColor: string) => {
     // TODO: input validation
     if (tagName === "") {
@@ -64,13 +93,32 @@ const useTags = () => {
     }
   };
 
-  // TODO: delete request axios
-  const deleteTag = async (tagId: string) => {};
+  const deleteTag = async (tagId: string) => {
+    if (!user || !token) {
+      throw new Error("No user found. Please try again.");
+    }
+
+    try {
+      const {
+        data: { success },
+      } = await axios.delete(`/api/v1/tags/${tagId}`);
+      console.log("Delete was a ", success);
+
+      const newTags = tags.filter((tag: Tag) => tag._id !== tagId);
+      setTags(newTags);
+      return success;
+    } catch (err) {
+      throw err;
+    }
+  };
 
   return {
     tags,
+    loadingTags,
     getTags,
     createTag,
+    updateTag,
+    deleteTag,
   };
 };
 

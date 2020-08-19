@@ -32,9 +32,10 @@ const useQuestions = (): QuestionsHookState => {
   // TODO: axios get /api/v1/questions/:questionId
   const getQuestion = async () => {};
 
-  // TODO: axios delete question
-  const deleteQuestion = async () => {};
-  // TODO: axios update question
+  // TODO: axios delete question DELETE /api/v1/questions
+  const deleteQuestion = async () => { };
+  
+  // TODO: axios update question PUT /api/v1/questions
   const updateQuestion = async () => {};
 
   return { questions, getQuestions };

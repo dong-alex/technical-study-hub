@@ -8,14 +8,14 @@ import useQuestions from "../../hooks/useQuestions";
 import NavigationLayout from "../layout/NavigationLayout";
 import { TextInput, Button, Icon, Dropdown } from "react-materialize";
 
-type QuestionPageProps = {};
+type QuestionDashboardPageProps = {};
 
-const QuestionPage: FunctionComponent<QuestionPageProps> = () => {
+const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = () => {
   const { getQuestions } = useQuestions();
   const [questionName, setQuestionName] = useState<string>("");
 
-	useEffect(() => {
-		// TODO: cache the results
+  useEffect(() => {
+    // TODO: cache the results
     const fetch = async () => {
       const questions = await getQuestions();
       console.log(questions);
@@ -61,4 +61,4 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = () => {
   );
 };
 
-export default QuestionPage;
+export default QuestionDashboardPage;

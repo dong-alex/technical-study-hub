@@ -1,16 +1,18 @@
 import React, { FunctionComponent } from "react";
 import { Route, Redirect, RouteComponentProps } from "react-router-dom";
 
-type PrivateRouteProps = {
+type DynamicPrivateRouteProps = {
   authenticated: boolean;
   component: FunctionComponent<ComponentProps>;
   path: string;
   exact?: boolean;
 };
 
-interface ComponentProps extends RouteComponentProps {}
+type IDParam = { id: string };
 
-const PrivateRoute: FunctionComponent<PrivateRouteProps> = ({
+interface ComponentProps extends RouteComponentProps<IDParam> {}
+
+const DynamicPrivateRoute: FunctionComponent<DynamicPrivateRouteProps> = ({
   authenticated,
   component: Component,
   ...rest
@@ -23,4 +25,4 @@ const PrivateRoute: FunctionComponent<PrivateRouteProps> = ({
   />
 );
 
-export default PrivateRoute;
+export default DynamicPrivateRoute;
