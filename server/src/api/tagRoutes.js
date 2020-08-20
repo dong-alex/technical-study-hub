@@ -3,8 +3,9 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const passport = require("../passport");
 const Tag = require("../models/Tag");
-const e = require("express");
+const Question = require("../models/Question");
 
+// get all tags from the user GET /api/v1/tags/
 router.get(
   "/",
   passport.authenticate("jwt", { session: false, failWithError: true }),
@@ -22,56 +23,89 @@ router.get(
   }
 );
 
+// get all questions associated to the tag GET /api/v1/tags/:tagId
+router.get(
+  "/:tagId",
+  passport.authenticate("jwt", { session: false, failWithError: true }),
+  (req, res, next) => {
+    Question.find(
+      {
+        "tags._id": mongoose.Types.ObjectId(req.params.tagId),
+        userId: mongoose.Types.ObjectId(req.user._id),
+      },
+      (err, docs) => {
+        if (err) {
+          next(err);
+        } else {
+          return res.status(200).send({
+            message: "Succesfully obtained all tags by user",
+            questions: docs,
+          });
+        }
+      }
+    );
+  }
+);
+
+// create tag POST /api/v1/tags
 router.post(
   "/",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
-    Tag.findOne({ tagName: req.body.tagName }, async (err, tag) => {
-      if (err) {
-        console.log(err);
-        next(err);
-      }
-
-      if (tag) {
-        console.log("Duplicate");
-        return res.status(422).json({
-          message:
-            "There is a tag name that exists - please try a different name.",
-        });
-      }
-
-      let newTag = new Tag({
+    Tag.findOne(
+      {
         tagName: req.body.tagName,
-        tagColor: req.body.tagColor,
-        userId: req.user._id,
-      });
+        userId: mongoose.Types.ObjectId(req.user._id),
+      },
+      async (err, tag) => {
+        if (err) {
+          console.log(err);
+          next(err);
+        }
 
-      try {
-        const document = await newTag.save();
+        if (tag) {
+          console.log("Duplicate");
+          return res.status(422).json({
+            message:
+              "There is a tag name that exists - please try a different name.",
+          });
+        }
 
-        return res.status(200).json({
-          message: "New tag registered",
-          tag: document,
+        let newTag = new Tag({
+          tagName: req.body.tagName,
+          tagColor: req.body.tagColor,
+          userId: req.user._id,
         });
-      } catch (err) {
-        console.log("Save error", err.message);
-        return res.status(422).json({
-          message: "There was an error saving your new tag. Please try again.",
-        });
+
+        try {
+          const document = await newTag.save();
+
+          return res.status(200).json({
+            message: "New tag registered",
+            tag: document,
+          });
+        } catch (err) {
+          console.log("Save error", err.message);
+          return res.status(422).json({
+            message:
+              "There was an error saving your new tag. Please try again.",
+          });
+        }
       }
-    });
+    );
   }
 );
 
+// update tags PUT /api/v1/tags/:tagId
 router.put(
-  "/",
+  "/:tagId",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
     Tag.findOneAndUpdate(
-      { _id: req.body.tagId },
+      { _id: req.params.tagId },
       { tagName: req.body.tagName, tagColor: req.body.tagColor },
       { upsert: true },
-      async (err, tag) => {
+      (err, tag) => {
         if (err) {
           console.log(err);
           next(err);
@@ -92,7 +126,7 @@ router.delete(
   "/:tagId",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
-    Tag.findByIdAndDelete(req.params.tagId, {}, async (err, success) => {
+    Tag.findByIdAndDelete(req.params.tagId, {}, (err, success) => {
       if (err) {
         console.log(err);
         next(err);
@@ -109,8 +143,10 @@ router.delete(
     });
   }
 );
+
+// tags question PUT /api/v1/tags/label/:questionId
 // router.put(
-//   "/tag/:questionId",
+//   "/label/:questionId",
 //   passport.authenticate("jwt", { session: false, failWithError: true }),
 //   async (req, res, next) => {
 //     // add the tag into the specific questionId
