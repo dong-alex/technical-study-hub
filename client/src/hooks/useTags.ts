@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { useAuthProvider } from "../components/auth/AuthenticationProvider";
-import { Tag } from "./reducers/tagsReducer";
+import { Tag, tagsReducer, TAGS_INITIAL_STATE } from "./reducers/tagsReducer";
 import axios from "axios";
 import TagActions from "./actions/tagActions";
 
 // TODO: use the questions to obtain the tags <-> questions association
 const useTags = () => {
-  const { user, token } = useAuthProvider();
-
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loadingTags, setLoadingTags] = useState<boolean>(true);
+  const [tagState, dispatch] = useReducer(tagsReducer, TAGS_INITIAL_STATE);
+  const { tags, loadingTags } = tagState;
+  const { user, token, authenticated } = useAuthProvider();
 
   useEffect(() => {
     const fetch = async () => {
+      if (!authenticated) {
+        return;
+      }
       await getTags();
-      setLoadingTags(false);
     };
     fetch();
   }, []);
@@ -25,20 +26,19 @@ const useTags = () => {
       throw new Error("No user found. Please try again.");
     }
 
-    const { _id } = user;
-    console.log(_id);
-
     try {
       const {
         data: { tags: tagsResponse },
       } = await axios.get("/api/v1/tags");
+      dispatch({
+        type: TagActions.FETCHED_TAGS,
+        payload: { tags: tagsResponse },
+      });
 
-      setTags(tagsResponse);
-      return true;
+      return tagsResponse;
     } catch (err) {
-      throw new Error(
-        "There was an error with getting tags. Please try again."
-      );
+      console.log("Error grabbing tags", err.message);
+      return []; // internal function to handle with
     }
   };
 
@@ -48,23 +48,22 @@ const useTags = () => {
     newTagName: string,
     newTagColor: string
   ) => {
-    if (tagId === "") {
-      throw new Error("Empty tag name. Please try again.");
-    }
-
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
-
     try {
+      if (tagId === "") {
+        throw new Error("Empty tag name. Please try again.");
+      }
+
+      if (!user || !token) {
+        throw new Error("No user found. Please try again.");
+      }
+
       const {
         data: { tag },
       } = await axios.put(`/api/v1/tags/${tagId}`, {
         tagName: newTagName,
         tagColor: newTagColor,
       });
-      console.log(tag);
-
+      dispatch({ type: TagActions.UPDATED_TAG, payload: { tag } });
       return tag;
     } catch (err) {
       console.log(err.message);
@@ -74,38 +73,39 @@ const useTags = () => {
 
   const createTag = async (tagName: string, tagColor: string) => {
     // TODO: input validation
-    if (tagName === "") {
-      throw new Error("Empty tag name. Please try again.");
-    }
-
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
 
     try {
+      if (tagName === "") {
+        throw new Error("Empty tag name. Please try again.");
+      }
+
+      if (!user || !token) {
+        throw new Error("No user found. Please try again.");
+      }
+
       const {
         data: { tag },
       } = await axios.post("/api/v1/tags", { tagName, tagColor });
-      setTags([...tags, tag]);
-      return true;
+      dispatch({ type: TagActions.ADDED_TAG, payload: tag });
+      return tag;
     } catch (err) {
+      console.log("Error creating tag", err.message);
       throw err;
     }
   };
 
   const deleteTag = async (tagId: string) => {
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
-
     try {
+      if (!user || !token) {
+        throw new Error("No user found. Please try again.");
+      }
       const {
         data: { success },
       } = await axios.delete(`/api/v1/tags/${tagId}`);
-      console.log("Delete was a ", success);
-
-      const newTags = tags.filter((tag: Tag) => tag._id !== tagId);
-      setTags(newTags);
+      dispatch({
+        type: TagActions.REMOVED_TAG,
+        payload: { deletedTagId: tagId },
+      });
       return success;
     } catch (err) {
       throw err;

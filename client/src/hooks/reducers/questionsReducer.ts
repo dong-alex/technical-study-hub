@@ -4,8 +4,9 @@ import { Tag } from "./tagsReducer";
 export type Question = {
   _id: string;
   name: string;
-  difficulty: string; // needs to be enum
+  difficulty: string;
   tags: Tag[];
+  notes: string[];
   userId: string;
   createdDate: Date;
 };
@@ -20,23 +21,39 @@ export const QUESTIONS_INITIAL_STATE = {
   loadingQuestions: true,
 };
 
+const filterOutQuestions = (filteredId: string, questions: Question[]) =>
+  questions.filter((question: Question) => question._id !== filteredId);
+
 export const questionsReducer = (state: QuestionsReducerState, action: any) => {
-  const { payload } = action;
+  const { payload, type } = action;
   const { questions } = state;
 
-  switch (action.type) {
+  switch (type) {
     case QuestionActions.ADDED_QUESTION:
       // TODO: check for payload data
       return {
-        questions: [...questions, payload],
+        questions: [...questions, payload.addedQuestion],
         loadingQuestions: false,
       };
+    case QuestionActions.FETCHED_QUESTIONS:
+      return {
+        questions: [...questions, ...payload.questions],
+        loadingQuestions: false,
+      };
+    case QuestionActions.EDITED_QUESTION:
+      return {
+        ...state,
+        questions: [
+          ...filterOutQuestions(payload.question._id, questions),
+          payload.question,
+        ],
+      };
     case QuestionActions.REMOVED_QUESTION:
-      const newQuestions = questions.filter(
-        (q) => q._id != payload.question._id
-      );
-      return {};
-    case QuestionActions.HANDLED_QUESTION:
+      return {
+        ...state,
+        questions: filterOutQuestions(payload.deletedQuestionId, questions),
+      };
+    case QuestionActions.INTERMEDIATE:
       return {
         ...state,
         loadingQuestions: true,

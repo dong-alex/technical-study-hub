@@ -4,13 +4,14 @@ import React, {
   useEffect,
   ChangeEvent,
 } from "react";
-import { NavLink, Redirect, RouteComponentProps } from "react-router-dom";
-import { Row, Col, Button, TextInput, Dropdown, Icon } from "react-materialize";
+import { NavLink, RouteComponentProps } from "react-router-dom";
+import { Button, TextInput, Icon } from "react-materialize";
 import styled from "styled-components";
 import NavigationLayout from "../layout/NavigationLayout";
 import { Question } from "../../hooks/reducers/questionsReducer";
 import { Tag } from "../../hooks/reducers/tagsReducer";
 import useQuestions from "../../hooks/useQuestions";
+import QuestionForm from "../utils/QuestionForm";
 
 type QuestionParams = { id: string };
 
@@ -26,14 +27,6 @@ const Title = styled.h4`
   user-select: none;
 `;
 
-const TagForm = styled(Row)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  place-items: center;
-  padding: 1rem 0 1rem 0;
-`;
-
 interface QuestionPageProps extends RouteComponentProps<QuestionParams> {}
 
 // singular tag overview page
@@ -43,8 +36,9 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
   },
 }: QuestionPageProps) => {
   const { questions, updateQuestion } = useQuestions();
+  const [currentDifficulty, setCurrentDifficulty] = useState<string>("EASY");
   const [currentQuestionName, setCurrentQuestionName] = useState<string>("");
-  const [attachedTags, setAttachedTags] = useState<Tag[]>();
+  const [attachedTags, setAttachedTags] = useState<string[]>([]);
 
   useEffect(() => {
     // grab the corresponding question details
@@ -55,9 +49,11 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
 
       if (specificQuestion) {
         console.log("Looking up", specificQuestion);
-        const { name, tags } = specificQuestion;
+        const { name, tags, difficulty } = specificQuestion;
+        const tagIds = tags.map((tag: Tag) => tag._id);
         setCurrentQuestionName(name);
-        setAttachedTags(tags);
+        setAttachedTags(tagIds);
+        setCurrentDifficulty(difficulty);
       } else {
         // these errors should not be hit
         throw new Error("Questions empty");
@@ -71,10 +67,6 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
     setCurrentQuestionName(event.target.value);
   };
 
-  const handleUpdateQuestion = async () => {
-    // await updateQuestion(questionId, currentQuestionName, currentTagColor);
-  };
-
   return (
     <NavigationLayout>
       <Header>
@@ -84,6 +76,7 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
         <Title>Question Details</Title>
       </Header>
       <h6>Update Your Question</h6>
+      <QuestionForm questionId={questionId} isUpdate />
     </NavigationLayout>
   );
 };

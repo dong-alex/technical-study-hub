@@ -9,20 +9,19 @@ import useQuestions from "../../hooks/useQuestions";
 import usePagination from "../../hooks/usePagination";
 import { Question } from "../../hooks/reducers/questionsReducer";
 import { Tag } from "../../hooks/reducers/tagsReducer";
+import { useDataProvider } from "../../hooks/DataProvider";
 
 type ColorPreviewProps = {
-  backgroundColor: string;
+  color: string;
 };
 
 interface TableDashboardProps {
-  data: Question[] | Tag[];
-  loadingState: boolean;
   isTag: boolean;
 }
 
 const TableTagColor = styled.td`
   > div {
-    background-color: ${(props: ColorPreviewProps) => props.backgroundColor};
+    background-color: ${(props: ColorPreviewProps) => props.color};
     margin: 0 auto 0 auto;
     width: 20px;
     height: 20px;
@@ -74,20 +73,22 @@ const isTagType = (item: Tag | Question): item is Tag => {
 };
 
 // specifically only for tags or questions
-const TableDashboard: FunctionComponent<TableDashboardProps> = ({
-  data,
-  isTag,
-  loadingState,
-}) => {
+const TableDashboard: FunctionComponent<TableDashboardProps> = ({ isTag }) => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [questionData, setQuestionData] = useState<Question[]>([]);
   const [tagData, setTagData] = useState<Tag[]>([]);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string>("");
   const { page, handlePageUp, handlePageDown } = usePagination(totalPages);
-  const { deleteTag } = useTags();
-  const { deleteQuestion } = useQuestions();
 
+  const {
+    tags,
+    questions,
+    deleteTag,
+    deleteQuestion,
+    loadingTags,
+    loadingQuestions,
+  } = useDataProvider();
   const itemsPerPage = 10;
 
   const resetModal = () => {
@@ -96,21 +97,19 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({
   };
 
   useEffect(() => {
-    setTotalPages(1 + data.length / itemsPerPage);
+    let offset = (page - 1) * itemsPerPage;
+    let tagSet = tags.slice(offset, offset + itemsPerPage);
+    let questionSet = questions.slice(offset, offset + itemsPerPage);
 
-    if (data && data.length > 0) {
-      // depending on the page - set the data 10 at a time per page
-      const offset = (page - 1) * itemsPerPage;
-      const displayData = data.slice(offset, offset + itemsPerPage);
-
-      // break up the union type
-      if (isTag) {
-        setTagData(displayData as Tag[]);
-      } else {
-        setQuestionData(displayData as Question[]);
-      }
+    if (tags && tags.length > 0) {
+      setTagData(tagSet);
+      setTotalPages(1 + tags.length / itemsPerPage);
     }
-  }, [data, page]);
+    if (questions && questions.length > 0) {
+      setQuestionData(questionSet);
+      setTotalPages(1 + questions.length / itemsPerPage);
+    }
+  }, [tags, questions, page]);
 
   const handleDeleteModalOpen = (id: string) => {
     setSelectedId(id);
@@ -141,7 +140,7 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({
                   <td>
                     <NavLink to={`/tags/${tag._id}`}>{tag.tagName}</NavLink>
                   </td>
-                  <TableTagColor backgroundColor={tag.tagColor}>
+                  <TableTagColor color={tag.tagColor}>
                     <div />
                   </TableTagColor>
                   <td>{tag.createdDate}</td>
@@ -165,6 +164,7 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({
         </Table>
       );
     }
+
     return (
       <Table centered>
         <thead>
@@ -177,6 +177,7 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({
         </thead>
         <tbody>
           {questionData.map((question: Question) => {
+            console.log("One question", question);
             return (
               <tr key={question._id}>
                 <td>
@@ -210,7 +211,7 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({
   return (
     <>
       <TableContainer>
-        {loadingState ? (
+        {loadingQuestions || loadingTags ? (
           <LoadingOverlay />
         ) : (
           <>

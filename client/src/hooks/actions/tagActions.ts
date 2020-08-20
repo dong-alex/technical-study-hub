@@ -1,8 +1,9 @@
 const TagActions = {
   ADDED_TAG: "ADDED_TAG",
-  HANDLED_TAG: "HANDLED_REQUEST",
-  REMOVED_REQUEST: "REMOVED_TAG",
-  EDITED_TAG: "EDITED_TAG",
+  FETCHED_TAGS: "FETCHED_TAGS",
+  REMOVED_TAG: "REMOVED_TAG",
+  UPDATED_TAG: "UPDATED_TAG",
+  INTERMEDIATE: "INTERMEDIATE", // current requests going on
 };
 
 export default TagActions;

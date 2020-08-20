@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import axios from "axios";
-import { Question } from "./reducers/questionsReducer";
-import { Tag } from "./reducers/tagsReducer";
+import {
+  Question,
+  questionsReducer,
+  QUESTIONS_INITIAL_STATE,
+} from "./reducers/questionsReducer";
+import QuestionActions from "./actions/questionActions";
 import { useAuthProvider } from "../components/auth/AuthenticationProvider";
 
 type QuestionsHookState = {
@@ -10,13 +14,15 @@ type QuestionsHookState = {
   createQuestion: (
     name: string,
     difficulty: string,
-    tags: string[]
+    tags: string[],
+    notes: string[]
   ) => Promise<Question | Error>;
   updateQuestion: (
     questionId: string,
     questionName: string,
+    difficulty: string,
     attachedTags: string[], // reference representation - populated on request
-    difficulty?: DifficultyOptions
+    notes: string[]
   ) => Promise<boolean | Error>;
   deleteQuestion: (questionId: string) => Promise<boolean | Error>;
 };
@@ -24,9 +30,15 @@ type QuestionsHookState = {
 export type DifficultyOptions = "EASY" | "MEDIUM" | "HARD" | string;
 
 const useQuestions = (): QuestionsHookState => {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loadingQuestions, setLoadingQuestions] = useState<boolean>(true);
-  const { user, token } = useAuthProvider();
+  const [questionState, dispatch] = useReducer(
+    questionsReducer,
+    QUESTIONS_INITIAL_STATE
+  );
+
+  const { questions, loadingQuestions } = questionState;
+  // const [questions, setQuestions] = useState<Question[]>([]);
+  // const [loadingQuestions, setLoadingQuestions] = useState<boolean>(true);
+  const { user, token, authenticated } = useAuthProvider();
 
   // TODO: axios get /api/v1/questions
   const getQuestions = async () => {
@@ -38,8 +50,14 @@ const useQuestions = (): QuestionsHookState => {
       const {
         data: { questions },
       } = await axios.get("/api/v1/questions");
-      setQuestions(questions);
-      setLoadingQuestions(false);
+
+      // dispatch here TODO : change different action
+      dispatch({
+        type: QuestionActions.FETCHED_QUESTIONS,
+        payload: { questions },
+      });
+      // setQuestions(questions);
+      // setLoadingQuestions(false);
       return questions;
     } catch (err) {
       throw err;
@@ -48,6 +66,11 @@ const useQuestions = (): QuestionsHookState => {
 
   useEffect(() => {
     const fetch = async () => {
+      // skip the process until logged in
+      if (!authenticated) {
+        return;
+      }
+
       await getQuestions();
     };
     fetch();
@@ -56,7 +79,8 @@ const useQuestions = (): QuestionsHookState => {
   const createQuestion = async (
     name: string,
     difficulty: DifficultyOptions,
-    tags: string[]
+    tags: string[],
+    notes: string[]
   ) => {
     if (name === "") {
       throw new Error("Empty name. Please try again.");
@@ -70,30 +94,73 @@ const useQuestions = (): QuestionsHookState => {
       const {
         data: { question },
       } = await axios.post("/api/v1/questions", { name, difficulty, tags });
-      setQuestions([...questions, question]);
+      dispatch({
+        type: QuestionActions.ADDED_QUESTION,
+        payload: { addedQuestion: question },
+      });
+      // setQuestions([...questions, question]);
       return question;
     } catch (err) {
       throw err;
     }
   };
 
-  // TODO: axios get /api/v1/questions/:questionId
-  const getQuestion = async () => {};
-
   // TODO: axios delete question DELETE /api/v1/questions
   const deleteQuestion = async (questionId: string) => {
-    console.log("Delete operation");
-    return true;
+    try {
+      const { data: success } = await axios.delete(
+        `/api/v1/questions/${questionId}`
+      );
+      if (success) {
+        // const newQuestions = questions.filter(
+        //   (question: Question) => question._id !== questionId
+        // );
+        dispatch({
+          type: QuestionActions.REMOVED_QUESTION,
+          payload: { deletedQuestionId: questionId },
+        });
+        // setQuestions(newQuestions);
+      } else {
+        console.log("Did not delete any question");
+      }
+
+      return success;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   };
 
   // TODO: axios update question PUT /api/v1/questions
   const updateQuestion = async (
     questionId: string,
+    questionName: string,
     difficulty: string,
-    tags: string[]
+    attachedTags: string[],
+    notes: string[]
   ) => {
-    console.log(questionId, difficulty, tags);
-    return true;
+    console.log(questionId, questionName, difficulty, attachedTags);
+    try {
+      const { data: question } = await axios.put(
+        `/api/v1/questions/${questionId}`,
+        {
+          name: questionName,
+          difficulty,
+          tags: attachedTags,
+          notes,
+        }
+      );
+      dispatch({
+        type: QuestionActions.EDITED_QUESTION,
+        payload: { question },
+      });
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    } finally {
+      return true;
+    }
   };
 
   return {
