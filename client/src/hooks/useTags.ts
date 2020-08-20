@@ -4,6 +4,7 @@ import { Tag } from "./reducers/tagsReducer";
 import axios from "axios";
 import TagActions from "./actions/tagActions";
 
+// TODO: use the questions to obtain the tags <-> questions association
 const useTags = () => {
   const { user, token } = useAuthProvider();
 
@@ -58,8 +59,7 @@ const useTags = () => {
     try {
       const {
         data: { tag },
-      } = await axios.put("/api/v1/tags", {
-        tagId,
+      } = await axios.put(`/api/v1/tags/${tagId}`, {
         tagName: newTagName,
         tagColor: newTagColor,
       });

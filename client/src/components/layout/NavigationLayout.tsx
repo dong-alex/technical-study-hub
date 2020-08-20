@@ -1,10 +1,9 @@
 import React, { FunctionComponent } from "react";
-import "../../sass/navigationLayout.scss";
 import "materialize-css";
 import { Navbar, NavItem, Icon, Row, Col } from "react-materialize";
-// import MenuLogo from "../../assets/sidebar-menu.svg";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
+import "../../sass/navigationLayout.scss";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
 
 type NavigationLayoutProps = {
@@ -49,7 +48,7 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
           )}
         </Navbar>
         <Row>
-          <Col s={3} m={4} l={2} className="left-side light-blue lighten-2">
+          <Col s={2} m={3} l={1} className="left-side light-blue lighten-2">
             <NavLink to="/questions" className="sidebar-nav">
               Questions
             </NavLink>
@@ -57,7 +56,7 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
               Tags
             </NavLink>
           </Col>
-          <Col s={9} m={8} l={10} className="main-content">
+          <Col s={10} m={9} l={11} className="main-content">
             <MainContainer>{children}</MainContainer>
           </Col>
         </Row>

@@ -7,6 +7,7 @@ export type Question = {
   difficulty: string; // needs to be enum
   tags: Tag[];
   userId: string;
+  createdDate: Date;
 };
 
 export type QuestionsReducerState = {

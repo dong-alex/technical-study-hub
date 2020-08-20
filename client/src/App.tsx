@@ -15,6 +15,7 @@ import { useAuthProvider } from "./components/auth/AuthenticationProvider";
 import TagDashboardPage from "./components/pages/TagDashboardPage";
 import QuestionDashboardPage from "./components/pages/QuestionDashboardPage";
 import TagPage from "./components/pages/TagPage";
+import QuestionPage from "./components/pages/QuestionPage";
 
 type AppProps = {};
 
@@ -48,11 +49,16 @@ const App: FunctionComponent<AppProps> = () => {
             path="/tags/:id"
             component={TagPage}
           />
+          <DynamicPrivateRoute
+            authenticated={authenticated}
+            path="/questions/:id"
+            component={QuestionPage}
+          />
           <Route
             path="/login"
             exact
             component={
-              authenticated ? () => <Redirect to="/tags" /> : LoginPage
+              authenticated ? () => <Redirect to="/questions" /> : LoginPage
             }
           />
         </Switch>
