@@ -97,16 +97,17 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({ isTag }) => {
   };
 
   useEffect(() => {
+    console.log(questions);
     let offset = (page - 1) * itemsPerPage;
     let tagSet = tags.slice(offset, offset + itemsPerPage);
     let questionSet = questions.slice(offset, offset + itemsPerPage);
 
-    if (tags && tags.length > 0) {
-      setTagData(tagSet);
+    setTagData(tagSet);
+    setQuestionData(questionSet);
+
+    if (isTag) {
       setTotalPages(1 + tags.length / itemsPerPage);
-    }
-    if (questions && questions.length > 0) {
-      setQuestionData(questionSet);
+    } else {
       setTotalPages(1 + questions.length / itemsPerPage);
     }
   }, [tags, questions, page]);
@@ -177,7 +178,6 @@ const TableDashboard: FunctionComponent<TableDashboardProps> = ({ isTag }) => {
         </thead>
         <tbody>
           {questionData.map((question: Question) => {
-            console.log("One question", question);
             return (
               <tr key={question._id}>
                 <td>

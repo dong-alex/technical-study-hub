@@ -112,14 +112,10 @@ const useQuestions = (): QuestionsHookState => {
         `/api/v1/questions/${questionId}`
       );
       if (success) {
-        // const newQuestions = questions.filter(
-        //   (question: Question) => question._id !== questionId
-        // );
         dispatch({
           type: QuestionActions.REMOVED_QUESTION,
           payload: { deletedQuestionId: questionId },
         });
-        // setQuestions(newQuestions);
       } else {
         console.log("Did not delete any question");
       }
@@ -139,7 +135,6 @@ const useQuestions = (): QuestionsHookState => {
     attachedTags: string[],
     notes: string[]
   ) => {
-    console.log(questionId, questionName, difficulty, attachedTags);
     try {
       const { data: question } = await axios.put(
         `/api/v1/questions/${questionId}`,

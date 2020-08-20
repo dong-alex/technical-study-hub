@@ -30,7 +30,6 @@ export const questionsReducer = (state: QuestionsReducerState, action: any) => {
 
   switch (type) {
     case QuestionActions.ADDED_QUESTION:
-      // TODO: check for payload data
       return {
         questions: [...questions, payload.addedQuestion],
         loadingQuestions: false,
@@ -49,9 +48,14 @@ export const questionsReducer = (state: QuestionsReducerState, action: any) => {
         ],
       };
     case QuestionActions.REMOVED_QUESTION:
+      const newQuestions = filterOutQuestions(
+        payload.deletedQuestionId,
+        questions
+      );
+      console.log(newQuestions);
       return {
         ...state,
-        questions: filterOutQuestions(payload.deletedQuestionId, questions),
+        questions: newQuestions,
       };
     case QuestionActions.INTERMEDIATE:
       return {
