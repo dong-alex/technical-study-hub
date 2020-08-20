@@ -4,7 +4,9 @@ import {
   Route,
   Switch,
   Redirect,
+  RouteComponentProps,
 } from "react-router-dom";
+import { History, Location, State } from "history";
 import "./sass/app.scss";
 import "materialize-css";
 import HomePage from "./components/pages/HomePage";
@@ -21,7 +23,6 @@ type AppProps = {};
 
 const App: FunctionComponent<AppProps> = () => {
   const { authenticated } = useAuthProvider();
-
   return (
     <div className="root">
       <Router>

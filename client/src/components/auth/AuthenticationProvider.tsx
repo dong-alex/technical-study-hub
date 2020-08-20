@@ -9,15 +9,6 @@ import React, {
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// type AuthState = {
-//   authenticated: boolean;
-//   user: any | null;
-//   loaded: boolean;
-//   onRegister: (userData: UserFormData) => Promise<boolean | Error>;
-//   onLogin: (loginData: LoginData) => Promise<string | Error>;
-//   onLogout: () => boolean | Error;
-// };
-
 type LoginData = {
   email: string;
   password: string;
@@ -66,8 +57,6 @@ export const AuthenticationProvider: FunctionComponent = ({ children }) => {
     const {
       data: { user },
     } = await axios.get("/auth/v1/profile");
-    console.log(user);
-
     // get the user
     if (user) {
       console.log("Found user using cookie stored");
@@ -96,8 +85,8 @@ export const AuthenticationProvider: FunctionComponent = ({ children }) => {
     } else {
       delete axios.defaults.headers.common["Authorization"];
     }
-	}, [token]);
-	
+  }, [token]);
+
   useEffect(() => {
     setAuthenticated(user !== null && token !== "");
   }, [user, token]);
