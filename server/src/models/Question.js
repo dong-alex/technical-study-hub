@@ -22,6 +22,12 @@ const QuestionSchema = new mongoose.Schema({
       default: null,
     },
   ],
+  notes: [
+    {
+      type: String,
+      default: null,
+    },
+  ],
   userId: {
     // userId
     type: mongoose.Schema.Types.ObjectId,

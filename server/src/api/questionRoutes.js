@@ -59,6 +59,7 @@ router.post(
         name: req.body.name,
         difficulty: req.body.difficulty,
         tags: tagIds,
+        notes: req.body.notes,
         userId: mongoose.Types.ObjectId(req.user._id),
       });
 
@@ -112,20 +113,18 @@ router.put(
   "/:questionId",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
-    const validated = validateUpdateObject(req.body);
-
-    if (!validated) {
-      return res.status(422).json({
-        message: "Invalid parameters. Please try again",
-      });
-    }
-
     // construct the object to update the question with
     Question.findOneAndUpdate(
       { _id: req.params.questionId },
-      req.body,
+      {
+        name: req.body.name,
+        difficulty: req.body.difficulty,
+        tags: req.body.tags,
+        notes: req.body.notes,
+      },
       { upsert: true },
       (err, question) => {
+        console.log(err);
         if (err) {
           console.log(err);
           next(err);
@@ -146,6 +145,7 @@ router.put(
   }
 );
 
+// maybe needed?
 // adds or updates a tag to the specific question PUT /api/v1/questions/label/:questionId
 router.put(
   "/label/:questionId",
