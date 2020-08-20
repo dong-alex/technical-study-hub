@@ -18,6 +18,7 @@ type QuestionsHookState = {
     attachedTags: string[], // reference representation - populated on request
     difficulty?: DifficultyOptions
   ) => Promise<boolean | Error>;
+  deleteQuestion: (questionId: string) => Promise<boolean | Error>;
 };
 
 export type DifficultyOptions = "EASY" | "MEDIUM" | "HARD" | string;
@@ -80,7 +81,10 @@ const useQuestions = (): QuestionsHookState => {
   const getQuestion = async () => {};
 
   // TODO: axios delete question DELETE /api/v1/questions
-  const deleteQuestion = async () => {};
+  const deleteQuestion = async (questionId: string) => {
+    console.log("Delete operation");
+    return true;
+  };
 
   // TODO: axios update question PUT /api/v1/questions
   const updateQuestion = async (
@@ -96,6 +100,7 @@ const useQuestions = (): QuestionsHookState => {
     questions,
     createQuestion,
     updateQuestion,
+    deleteQuestion,
     loadingQuestions,
   };
 };

@@ -23,6 +23,9 @@ import NavigationLayout from "../layout/NavigationLayout";
 import LoadingOverlay from "../utils/LoadingOverlay";
 import usePagination from "../../hooks/usePagination";
 import { Tag } from "../../hooks/reducers/tagsReducer";
+import TagSelectDropdown from "../utils/TagSelectDropdown";
+import DifficultySelectDropdown from "../utils/DifficultySelectDropdown";
+import TableDashboard from "../utils/TableDashboard";
 
 type QuestionDashboardPageProps = {};
 type ColorPreviewProps = {
@@ -87,30 +90,8 @@ const ColorPreview = styled.div`
 
 const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = () => {
   const { questions, loadingQuestions, createQuestion } = useQuestions();
-  const { tags } = useTags();
-
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [tableQuestions, setTableQuestions] = useState<Question[]>([]);
   const [questionName, setQuestionName] = useState<string>("");
-  const { page, handlePageUp, handlePageDown } = usePagination(totalPages);
-
-  // document select within the difficulty select to pull values
-  const questionsPerPage = 10;
-
-  useEffect(() => {
-    setTotalPages(1 + questions.length / questionsPerPage);
-  }, [questions]);
-
-  useEffect(() => {
-    console.log("Obtained questions", questions);
-    // depending on the page - set the questions 10 at a time per page
-    const offset = (page - 1) * questionsPerPage;
-    const displayQuestions: Question[] = questions.slice(
-      offset,
-      offset + questionsPerPage
-    );
-    setTableQuestions(displayQuestions);
-  }, [questions, page]);
 
   // TODO: more proper validation with errors
   const handleQuestionNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -151,56 +132,8 @@ const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = () 
           onChange={handleQuestionNameChange}
           value={questionName}
         />
-        <Select
-          id="difficulty-select"
-          multiple={false}
-          options={{
-            dropdownOptions: {
-              alignment: "left",
-              autoTrigger: true,
-              closeOnClick: true,
-              constrainWidth: true,
-              coverTrigger: true,
-              hover: false,
-              inDuration: 150,
-              outDuration: 250,
-            },
-          }}
-          value={"EASY"}
-        >
-          <option disabled value="">
-            Set Difficulty
-          </option>
-          <option value="EASY">EASY</option>
-          <option value="MEDIUM">MEDIUM</option>
-          <option value="HARD">HARD</option>
-        </Select>
-        <Select
-          id="tags-select"
-          multiple
-          options={{
-            dropdownOptions: {
-              alignment: "left",
-              autoTrigger: true,
-              closeOnClick: true,
-              constrainWidth: true,
-              coverTrigger: true,
-              hover: false,
-              inDuration: 150,
-              outDuration: 250,
-            },
-          }}
-          value={""}
-        >
-          <option disabled value="">
-            Add tags
-          </option>
-          {tags.map((tag: Tag) => (
-            <option key={tag._id} value={tag._id}>
-              {tag.tagName}
-            </option>
-          ))}
-        </Select>
+        <DifficultySelectDropdown />
+        <TagSelectDropdown />
         <Button
           className="light-blue lighten-2 hoverable"
           onClick={handleAddQuestion}
@@ -208,68 +141,11 @@ const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = () 
           Add Question
         </Button>
       </QuestionForm>
-      <TableContainer>
-        {loadingQuestions ? (
-          <LoadingOverlay />
-        ) : (
-          <>
-            <Table centered>
-              <thead>
-                <tr>
-                  <th data-field="id">Question</th>
-                  <th data-field="tags-attached">Tags</th>
-                  <th data-field="created-on">Created On</th>
-                  <th data-field="actions">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableQuestions.map((question: Question) => {
-                  return (
-                    <tr key={question._id}>
-                      <td>
-                        <NavLink to={`/questions/${question._id}`}>
-                          {question.name}
-                        </NavLink>
-                      </td>
-                      <td>{question.tags.length}</td>
-                      <td>{question.createdDate}</td>
-                      <td>
-                        <TableActions>
-                          <Button
-                            floating
-                            className="red"
-                            tooltip="Delete Question"
-                            onClick={() => {}}
-                            icon={<Icon>delete</Icon>}
-                          />
-                        </TableActions>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-            <CustomPagination
-              activePage={page}
-              items={totalPages}
-              leftBtn={
-                <PageButton
-                  className="light-blue lighten-2"
-                  onClick={handlePageDown}
-                  icon={<Icon>chevron_left</Icon>}
-                />
-              }
-              rightBtn={
-                <PageButton
-                  className="light-blue lighten-2"
-                  onClick={handlePageUp}
-                  icon={<Icon>chevron_right</Icon>}
-                />
-              }
-            />
-          </>
-        )}
-      </TableContainer>
+      <TableDashboard
+        data={questions}
+        isTag={false}
+        loadingState={loadingQuestions}
+      />
     </NavigationLayout>
   );
 };
