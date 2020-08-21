@@ -3,8 +3,8 @@ Web application to help track coding questions, their patterns, and main concept
 
 # Requirements
 
-- [] Setup frontend in React
+- [x] Setup frontend in React
 - [x] Base Express setup with MongoDB connected
 - [x] Setup MongoDB Atlas for initial storage
-- [] Consistent Testing
-- [] Full deployment
+[] Consistent Testing
+[] Full deployment
