@@ -214,6 +214,7 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
             multiple
             value={attachedTags}
             onChange={handleTagChange}
+            disabled={tags.length === 0}
             input={<Input />}
             renderValue={(selected) => {
               // obtain tag information

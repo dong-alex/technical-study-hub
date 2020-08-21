@@ -7,7 +7,7 @@ import "../../sass/loginPage.scss";
 type LoginPageProps = {};
 
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
-  const { onLogin, onRegister, loaded, onLogout } = useAuthProvider();
+  const { onLogin, onRegister } = useAuthProvider();
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -16,13 +16,11 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
   const handleLogin = (event: any) => {
     event.preventDefault();
     onLogin({ email, password });
-    console.log("Attempting to login");
   };
 
   const handleRegistration = (event: any) => {
     event.preventDefault();
     onRegister({ name, email, password });
-    console.log("Attempting to register new user");
   };
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {

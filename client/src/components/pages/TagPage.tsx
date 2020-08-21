@@ -1,15 +1,8 @@
-import React, {
-  FunctionComponent,
-  useState,
-  useEffect,
-  ChangeEvent,
-} from "react";
+import React, { FunctionComponent } from "react";
 import { NavLink, RouteComponentProps } from "react-router-dom";
 import { Icon, Button } from "react-materialize";
 import styled from "styled-components";
 import NavigationLayout from "../layout/NavigationLayout";
-import { Tag } from "../../hooks/reducers/tagsReducer";
-import useTags from "../../hooks/useTags";
 import TagForm from "../utils/TagForm";
 
 type TagParams = { id: string };
@@ -17,6 +10,7 @@ type TagParams = { id: string };
 const Header = styled.div`
   display: flex;
   place-items: center;
+  justify-content: center;
   margin-top: 1.5rem;
   margin-bottom: 2rem;
 `;

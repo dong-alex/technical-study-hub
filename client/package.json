@@ -20,6 +20,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/react-table": "^7.0.22",
     "@types/styled-components": "^5.1.2",
+    "@types/validator": "^13.1.0",
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
     "history": "^5.0.0",
@@ -36,7 +37,8 @@
     "react-scripts": "3.4.1",
     "react-table": "^7.5.0",
     "styled-components": "^5.1.1",
-    "typescript": "~3.7.2"
+    "typescript": "~3.7.2",
+    "validator": "^13.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -4,8 +4,6 @@ import styled from "styled-components";
 import { Button, Icon, Table, Pagination } from "react-materialize";
 import DeleteModal from "./DeleteModal";
 import LoadingOverlay from "./LoadingOverlay";
-import useTags from "../../hooks/useTags";
-import useQuestions from "../../hooks/useQuestions";
 import usePagination from "../../hooks/usePagination";
 import { Question } from "../../hooks/reducers/questionsReducer";
 import { Tag } from "../../hooks/reducers/tagsReducer";
