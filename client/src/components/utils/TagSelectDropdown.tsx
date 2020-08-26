@@ -1,7 +1,7 @@
 import React from "react";
 import { Select } from "react-materialize";
-import { Tag } from "../../hooks/reducers/tagsReducer";
 import useTags from "../../hooks/useTags";
+import { Tag } from "../../types";
 
 const TagSelectDropdown = () => {
   const { tags } = useTags();

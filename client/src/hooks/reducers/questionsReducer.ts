@@ -1,20 +1,5 @@
 import QuestionActions from "../actions/questionActions";
-import { Tag } from "./tagsReducer";
-
-export type Question = {
-  _id: string;
-  name: string;
-  difficulty: string;
-  tags: Tag[];
-  notes: string[];
-  userId: string;
-  createdDate: Date;
-};
-
-export type QuestionsReducerState = {
-  questions: Question[];
-  loadingQuestions: boolean;
-};
+import { Question, QuestionsReducerState, Tag } from "../../types";
 
 export const QUESTIONS_INITIAL_STATE = {
   questions: [],

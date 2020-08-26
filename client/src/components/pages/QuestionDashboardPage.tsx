@@ -6,17 +6,7 @@ import QuestionForm from "../utils/QuestionForm";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import { RouteComponentProps } from "react-router-dom";
-
-type LocationState = {
-  updateSuccess?: boolean;
-};
-
-type QuestionDashboardPageProps = RouteComponentProps<
-  {},
-  StaticContext,
-  LocationState
->;
+import { QuestionDashboardPageProps } from "../../types";
 
 const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = ({
   history: {

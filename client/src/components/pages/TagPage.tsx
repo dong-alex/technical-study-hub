@@ -4,8 +4,7 @@ import { Icon, Button } from "react-materialize";
 import styled from "styled-components";
 import NavigationLayout from "../layout/NavigationLayout";
 import TagForm from "../utils/TagForm";
-
-type TagParams = { id: string };
+import { TagPageParams } from "../../types";
 
 const Header = styled.div`
   display: flex;
@@ -20,7 +19,7 @@ const Title = styled.h4`
   user-select: none;
 `;
 
-interface TagPageProps extends RouteComponentProps<TagParams> {}
+interface TagPageProps extends RouteComponentProps<TagPageParams> {}
 
 // singular tag overview page
 const TagPage: FunctionComponent<TagPageProps> = ({

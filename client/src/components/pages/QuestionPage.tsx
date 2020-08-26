@@ -4,8 +4,7 @@ import { Button, Icon } from "react-materialize";
 import styled from "styled-components";
 import NavigationLayout from "../layout/NavigationLayout";
 import QuestionForm from "../utils/QuestionForm";
-
-type QuestionParams = { id: string };
+import { QuestionPageParams } from "../../types";
 
 const Header = styled.div`
   display: flex;
@@ -20,7 +19,7 @@ const Title = styled.h4`
   user-select: none;
 `;
 
-interface QuestionPageProps extends RouteComponentProps<QuestionParams> {}
+interface QuestionPageProps extends RouteComponentProps<QuestionPageParams> {}
 
 // singular tag overview page
 const QuestionPage: FunctionComponent<QuestionPageProps> = ({

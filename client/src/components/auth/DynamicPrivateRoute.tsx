@@ -1,16 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { Route, Redirect, RouteComponentProps } from "react-router-dom";
-
-type DynamicPrivateRouteProps = {
-  authenticated: boolean;
-  component: FunctionComponent<ComponentProps>;
-  path: string;
-  exact?: boolean;
-};
-
-type IDParam = { id: string };
-
-interface ComponentProps extends RouteComponentProps<IDParam> {}
+import { Route, Redirect } from "react-router-dom";
+import { DynamicPrivateRouteProps, DynamicComponentProps } from "../../types";
 
 const DynamicPrivateRoute: FunctionComponent<DynamicPrivateRouteProps> = ({
   authenticated,
@@ -19,7 +9,7 @@ const DynamicPrivateRoute: FunctionComponent<DynamicPrivateRouteProps> = ({
 }) => (
   <Route
     {...rest}
-    component={(props: ComponentProps) =>
+    component={(props: DynamicComponentProps) =>
       authenticated ? <Component {...props} /> : <Redirect to="/login" />
     }
   />

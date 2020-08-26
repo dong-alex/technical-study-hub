@@ -8,17 +8,7 @@ import React, {
 
 import axios from "axios";
 import Cookies from "js-cookie";
-
-type LoginData = {
-  email: string;
-  password: string;
-};
-
-type UserFormData = {
-  name: string;
-  email: string;
-  password: string;
-};
+import { LoginData, UserFormData } from "../../types";
 
 export const AuthenticationContext = createContext<any | null>(null);
 

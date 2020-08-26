@@ -1,31 +1,12 @@
-import { useState, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
 import {
-  Question,
   questionsReducer,
   QUESTIONS_INITIAL_STATE,
 } from "./reducers/questionsReducer";
+import { QuestionsHookState } from "../types";
 import QuestionActions from "./actions/questionActions";
 import { useAuthProvider } from "../components/auth/AuthenticationProvider";
-
-type QuestionsHookState = {
-  questions: Question[];
-  loadingQuestions: boolean;
-  createQuestion: (
-    name: string,
-    difficulty: string,
-    tags: string[],
-    notes: string[]
-  ) => Promise<Question | Error>;
-  updateQuestion: (
-    questionId: string,
-    questionName: string,
-    difficulty: string,
-    attachedTags: string[], // reference representation - populated on request
-    notes: string[]
-  ) => Promise<boolean | Error>;
-  deleteQuestion: (questionId: string) => Promise<boolean | Error>;
-};
 
 export type DifficultyOptions = "EASY" | "MEDIUM" | "HARD" | string;
 
@@ -50,14 +31,10 @@ const useQuestions = (): QuestionsHookState => {
       const {
         data: { questions },
       } = await axios.get("/api/v1/questions");
-
-      // dispatch here TODO : change different action
       dispatch({
         type: QuestionActions.FETCHED_QUESTIONS,
         payload: { questions },
       });
-      // setQuestions(questions);
-      // setLoadingQuestions(false);
       return questions;
     } catch (err) {
       throw err;
@@ -93,12 +70,16 @@ const useQuestions = (): QuestionsHookState => {
     try {
       const {
         data: { question },
-      } = await axios.post("/api/v1/questions", { name, difficulty, tags });
+      } = await axios.post("/api/v1/questions", {
+        name,
+        difficulty,
+        tags,
+        notes,
+      });
       dispatch({
         type: QuestionActions.ADDED_QUESTION,
         payload: { addedQuestion: question },
       });
-      // setQuestions([...questions, question]);
       return question;
     } catch (err) {
       throw err;
@@ -127,7 +108,6 @@ const useQuestions = (): QuestionsHookState => {
     }
   };
 
-  // TODO: axios update question PUT /api/v1/questions
   const updateQuestion = async (
     questionId: string,
     questionName: string,

@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { useAuthProvider } from "../components/auth/AuthenticationProvider";
-import { Tag, tagsReducer, TAGS_INITIAL_STATE } from "./reducers/tagsReducer";
+import { useEffect, useReducer } from "react";
 import axios from "axios";
 import TagActions from "./actions/tagActions";
+import { tagsReducer, TAGS_INITIAL_STATE } from "./reducers/tagsReducer";
+import { useAuthProvider } from "../components/auth/AuthenticationProvider";
+import { Tag, TagsHookState } from "../types";
 
 // TODO: use the questions to obtain the tags <-> questions association
-const useTags = () => {
+const useTags = (): TagsHookState => {
   const [tagState, dispatch] = useReducer(tagsReducer, TAGS_INITIAL_STATE);
   const { tags, loadingTags } = tagState;
   const { user, token, authenticated } = useAuthProvider();
 
   useEffect(() => {
     const fetch = async () => {
+      // stops initial runs before authentication completes
       if (!authenticated) {
         return;
       }
@@ -20,7 +22,7 @@ const useTags = () => {
     fetch();
   }, []);
 
-  const getTags = async () => {
+  const getTags = async (): Promise<Tag[] | Error> => {
     // not authenticated or no user associated to the token
     if (!user || !token) {
       throw new Error("No user found. Please try again.");
@@ -47,7 +49,7 @@ const useTags = () => {
     tagId: string,
     newTagName: string,
     newTagColor: string
-  ) => {
+  ): Promise<Tag | Error> => {
     try {
       if (tagId === "") {
         throw new Error("Empty tag name. Please try again.");
@@ -71,7 +73,10 @@ const useTags = () => {
     }
   };
 
-  const createTag = async (tagName: string, tagColor: string) => {
+  const createTag = async (
+    tagName: string,
+    tagColor: string
+  ): Promise<Tag | Error> => {
     // TODO: input validation
 
     try {
@@ -94,7 +99,7 @@ const useTags = () => {
     }
   };
 
-  const deleteTag = async (tagId: string) => {
+  const deleteTag = async (tagId: string): Promise<boolean | Error> => {
     try {
       if (!user || !token) {
         throw new Error("No user found. Please try again.");

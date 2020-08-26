@@ -1,16 +1,12 @@
 // validates inputs for tags
 import React, { useEffect, useState } from "react";
 import validator from "validator";
-
-// would return object of errors to define into respective fields
-type TagValidatorState = {
-  tagErrors: Object;
-  validateTagName: (tagName: string) => boolean;
-  validateTagColor: (tagColor: string) => boolean;
-};
+import { TagValidatorState } from "../types";
+import { useAuthProvider } from "../components/auth/AuthenticationProvider";
 
 const useTagValidator = (): TagValidatorState => {
   const [tagErrors, setTagErrors] = useState<object>({});
+  const { user, authenticated } = useAuthProvider();
 
   const validateTagName = (tagName: string) => {
     return true;
@@ -20,10 +16,22 @@ const useTagValidator = (): TagValidatorState => {
     return true;
   };
 
+  const validateUserId = () => {
+
+    // no user at all
+    if (!user) {
+
+    }
+
+    // user ID does not match 
+    return true;
+  };
+
   return {
     tagErrors,
     validateTagName,
     validateTagColor,
+    validateUserId,
   };
 };
 

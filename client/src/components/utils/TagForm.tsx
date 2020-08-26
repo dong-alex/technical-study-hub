@@ -8,17 +8,12 @@ import { useHistory } from "react-router-dom";
 import { Dropdown, Button, TextInput } from "react-materialize";
 import { CirclePicker } from "react-color";
 import styled from "styled-components";
-import { Tag } from "../../hooks/reducers/tagsReducer";
+import { Tag, TagFormProps } from "../../types";
 
 import { useDataProvider } from "../../hooks/DataProvider";
 
 type ColorPreviewProps = {
   color: string;
-};
-
-type TagFormProps = {
-  tagId?: string;
-  isUpdate: boolean;
 };
 
 const TagNameInput = styled(TextInput)`

@@ -2,9 +2,8 @@ import React, { FunctionComponent, useState, ChangeEvent } from "react";
 import { TextInput, Button, Icon } from "react-materialize";
 import NavigationLayout from "../layout/NavigationLayout";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
+import { LoginPageProps } from "../../types";
 import "../../sass/loginPage.scss";
-
-type LoginPageProps = {};
 
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
   const { onLogin, onRegister } = useAuthProvider();

@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import NavigationLayout from "../layout/NavigationLayout";
-
-type HomePageProps = {};
+import { HomePageProps } from "../../types";
 
 const HomePage: FunctionComponent<HomePageProps> = () => {
   return (

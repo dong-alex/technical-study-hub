@@ -4,9 +4,7 @@ import {
   Route,
   Switch,
   Redirect,
-  RouteComponentProps,
 } from "react-router-dom";
-import { History, Location, State } from "history";
 import "./sass/app.scss";
 import "materialize-css";
 import HomePage from "./components/pages/HomePage";
@@ -18,8 +16,7 @@ import TagDashboardPage from "./components/pages/TagDashboardPage";
 import QuestionDashboardPage from "./components/pages/QuestionDashboardPage";
 import TagPage from "./components/pages/TagPage";
 import QuestionPage from "./components/pages/QuestionPage";
-
-type AppProps = {};
+import { AppProps } from "./types";
 
 const App: FunctionComponent<AppProps> = () => {
   const { authenticated } = useAuthProvider();

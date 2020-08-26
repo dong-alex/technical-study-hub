@@ -22,8 +22,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { Tag } from "../../hooks/reducers/tagsReducer";
-import { Question } from "../../hooks/reducers/questionsReducer";
+import { Tag, Question } from "../../types";
 import { useDataProvider } from "../../hooks/DataProvider";
 
 type ColorPreviewProps = {

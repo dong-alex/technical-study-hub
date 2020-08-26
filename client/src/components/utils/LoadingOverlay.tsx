@@ -1,6 +1,6 @@
 import React from "react";
-import styled from "styled-components";
 import { ProgressBar } from "react-materialize";
+import styled from "styled-components";
 
 const ProgressBarContainer = styled.div`
   display: flex;

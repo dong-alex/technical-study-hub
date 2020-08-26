@@ -5,9 +5,8 @@ import { Button, Icon, Table, Pagination } from "react-materialize";
 import DeleteModal from "./DeleteModal";
 import LoadingOverlay from "./LoadingOverlay";
 import usePagination from "../../hooks/usePagination";
-import { Question } from "../../hooks/reducers/questionsReducer";
-import { Tag } from "../../hooks/reducers/tagsReducer";
 import { useDataProvider } from "../../hooks/DataProvider";
+import { Tag, Question } from "../../types";
 
 type ColorPreviewProps = {
   color: string;

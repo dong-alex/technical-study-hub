@@ -1,16 +1,7 @@
 import TagActions from "../actions/tagActions";
-
-export type Tag = {
-  _id: string;
-  tagName: string;
-  tagColor: string;
-  createdDate: Date;
-};
-
-export type TagsReducerState = {
-  tags: Tag[];
-  loadingTags: boolean;
-};
+import {
+  Tag, TagsReducerState
+} from "../../types";
 
 export const TAGS_INITIAL_STATE = {
   tags: [],
