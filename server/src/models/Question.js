@@ -4,14 +4,20 @@ const QuestionSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    minlength: 5,
+    maxlength: 125,
   },
-  image: {
-    data: Buffer,
-    contentType: String,
+  url: {
+    type: String,
+    minLength: 20, // should contain leetcode.com/problems/...
+    maxLength: 300,
+    required: function () {
+      return this.url.includes("leetcode.com/problems");
+    },
   },
   difficulty: {
     type: String,
-    enum: ["EASY", "MEDIUM", "HARD"],
+    enum: ["Easy", "Medium", "Hard"],
     required: true,
   },
   tags: [

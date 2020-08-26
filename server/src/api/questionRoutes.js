@@ -61,6 +61,7 @@ router.post(
         tags: tagIds,
         notes: req.body.notes,
         userId: mongoose.Types.ObjectId(req.user._id),
+        url: req.body.url,
       });
 
       const document = await newQuestion.save();

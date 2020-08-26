@@ -5,6 +5,8 @@ const tagSchema = new mongoose.Schema({
   tagName: {
     type: String,
     required: true,
+    minlength: 2,
+    maxLength: 20,
   },
   tagColor: {
     type: String,
