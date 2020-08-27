@@ -103,10 +103,10 @@ router.delete(
   passport.authenticate("jwt", { session: false, failWithError: true }),
   async (req, res, next) => {
     try {
-      const success = Tag.findByIdAndDelete(req.params.tagId, {});
+      Tag.findByIdAndDelete(req.params.tagId);
       return res.status(200).json({
         message: "Tag has been deleted",
-        success: success,
+        success: true,
       });
     } catch (err) {
       next(err);
