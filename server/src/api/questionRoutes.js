@@ -4,21 +4,7 @@ const mongoose = require("mongoose");
 const passport = require("../passport");
 const Tag = require("../models/Tag");
 const Question = require("../models/Question");
-
-// create the update object for questions based on available fields
-const validateUpdateObject = (body) => {
-  // validates if params are proper - should always be caught in client
-  const bodySet = Object.keys(body);
-  const schemaSet = new Set(Object.keys(Question.schema.tree));
-
-  for (key in bodySet) {
-    if (!schemaSet.has(key)) {
-      return false;
-    }
-  }
-
-  return true;
-};
+const questionValidationSchema = require("../validation/questionSchema");
 
 // all questions [restricted to user] GET /api/v1/questions
 router.get(
@@ -49,19 +35,17 @@ router.post(
   async (req, res, next) => {
     try {
       // customized based on request body - requires some kind of ID - can be generated
+      const result = await questionValidationSchema.validateAsync(req.body);
 
       // convert tags into the objectId representation
-      const tagIds = req.body.tags.map((stringId) =>
+      const tagIds = result.tags.map((stringId) =>
         mongoose.Types.ObjectId(stringId)
       );
 
       const newQuestion = new Question({
-        name: req.body.name,
-        difficulty: req.body.difficulty,
+        ...result,
         tags: tagIds,
-        notes: req.body.notes,
         userId: mongoose.Types.ObjectId(req.user._id),
-        url: req.body.url,
       });
 
       const document = await newQuestion.save();
@@ -82,27 +66,23 @@ router.delete(
   passport.authenticate("jwt", { session: false, failWithError: true }),
   async (req, res, next) => {
     try {
-      Question.findByIdAndDelete(
-        req.params.questionId,
-        {},
-        async (err, success) => {
-          if (err) {
-            console.log(err);
-            next(err);
-          }
-
-          if (success) {
-            return res.status(200).json({
-              message: "Question has been deleted",
-              success: success,
-            });
-          } else {
-            console.log(success);
-          }
+      Question.findByIdAndDelete(req.params.questionId, {}, (err, success) => {
+        if (err) {
+          console.log(err);
+          next(err);
         }
-      );
+
+        if (success) {
+          return res.status(200).json({
+            message: "Question has been deleted",
+            success: success,
+          });
+        }
+
+        throw Error("There was an error with deleting the question");
+      });
     } catch (err) {
-      console.log(err);
+      console.log("DELETE questions", err);
       next(err);
     }
   }
@@ -113,19 +93,23 @@ router.delete(
 router.put(
   "/:questionId",
   passport.authenticate("jwt", { session: false, failWithError: true }),
-  (req, res, next) => {
+  async (req, res, next) => {
     // construct the object to update the question with
+    const result = await questionValidationSchema.validateAsync(req.body);
+
+    // convert tags into the objectId representation
+    const tagIds = result.tags.map((stringId) =>
+      mongoose.Types.ObjectId(stringId)
+    );
+
     Question.findOneAndUpdate(
       { _id: req.params.questionId },
       {
-        name: req.body.name,
-        difficulty: req.body.difficulty,
-        tags: req.body.tags,
-        notes: req.body.notes,
+        ...result,
+        tagIds,
       },
       { upsert: true },
       (err, question) => {
-        console.log(err);
         if (err) {
           console.log(err);
           next(err);

@@ -1,20 +1,19 @@
 function notFound(req, res, next) {
-	res.status(404);
-	const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
-	next(error);
+  res.status(404);
+  const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
+  next(error);
 }
 
-/* eslint-disable no-unused-vars */
+// all errors occur here and handled by the API service in the client using their response codes
 function errorHandler(err, req, res, next) {
-	/* eslint-enable no-unused-vars */
-	const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-	res.status(statusCode);
-	res.json({
-		message: err.message,
-	});
+  console.log("Error handler", err);
+  // will throw the error
+  return res.status(err.status || 500).send({
+    message: err.message,
+  });
 }
 
 module.exports = {
-	notFound,
-	errorHandler,
+  notFound,
+  errorHandler,
 };
