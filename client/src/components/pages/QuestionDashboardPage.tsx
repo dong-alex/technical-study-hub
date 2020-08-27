@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { StaticContext } from "react-router";
 import NavigationLayout from "../layout/NavigationLayout";
-import TableDashboard from "../utils/TableDashboard";
+// import TableDashboard from "../utils/TableDashboard";
 import QuestionForm from "../utils/QuestionForm";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -31,7 +31,7 @@ const QuestionDashboardPage: FunctionComponent<QuestionDashboardPageProps> = ({
       <h4>Question Dashboard</h4>
       <h6>Create New Questions</h6>
       <QuestionForm isUpdate={false} />
-      <TableDashboard isTag={false} />
+      {/* <TableDashboard isTag={false} /> */}
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",

@@ -1,11 +1,28 @@
-import React, { FunctionComponent, useState, useEffect } from "react";
+import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
+import styled from "styled-components";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import TableDashboard from "../utils/TableDashboard";
+import DeleteIcon from "@material-ui/icons/Delete";
 import NavigationLayout from "../layout/NavigationLayout";
 import TagForm from "../utils/TagForm";
+import DeleteModal from "../utils/DeleteModal";
+
 import { TagDashboardPageProps } from "../../types";
+import { useDataProvider } from "../../hooks/DataProvider";
+import CustomTable from "../utils/CustomTable";
+
+type ColorPreviewProps = {
+  color: string;
+};
+
+const ColorPreview = styled.div`
+  height: 2rem;
+  width: 2rem;
+  margin: 0 2rem 0 2rem;
+  border-radius: 2rem;
+  background-color: ${(props: ColorPreviewProps) => props.color};
+`;
 
 const TagDashboardPage: FunctionComponent<TagDashboardPageProps> = ({
   history: {
@@ -13,6 +30,60 @@ const TagDashboardPage: FunctionComponent<TagDashboardPageProps> = ({
   },
 }) => {
   const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const { tags, deleteTag } = useDataProvider();
+  const [selectedId, setSelectedId] = useState<string>("");
+
+  const resetModal = () => {
+    setSelectedId("");
+    setOpenDeleteModal(false);
+  };
+
+  const handleDeleteModalOpen = (id: string) => {
+    setSelectedId(id);
+    setOpenDeleteModal(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setSelectedId("");
+    setOpenDeleteModal(false);
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Tag Name",
+        accessor: "tagName",
+      },
+      {
+        Header: "Color",
+        accessor: "tagColor",
+        // nullify the string output of the color string and just use color
+        Cell: ({ value }: { value: any }): null => {
+          return null;
+        },
+      },
+      {
+        Header: "Created On",
+        accessor: "createdDate",
+      },
+      {
+        id: "button",
+        accessor: "_id",
+        Cell: ({ value }: any) => (
+          <IconButton
+            color="primary"
+            onClick={() => {
+              handleDeleteModalOpen(value);
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
     if (state && state.updateSuccess) {
@@ -29,7 +100,22 @@ const TagDashboardPage: FunctionComponent<TagDashboardPageProps> = ({
       <h4>Tag Dashboard</h4>
       <h6>Create New Tag</h6>
       <TagForm isUpdate={false} />
-      <TableDashboard isTag />
+      {tags && (
+        <CustomTable isTag columns={columns} data={tags} onDelete={deleteTag} />
+      )}
+      <DeleteModal
+        open={openDeleteModal}
+        onDelete={async () => {
+          try {
+            await deleteTag(selectedId);
+          } catch (err) {
+            console.log(err);
+          } finally {
+            resetModal();
+          }
+        }}
+        onModalClose={handleDeleteModalClose}
+      />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",

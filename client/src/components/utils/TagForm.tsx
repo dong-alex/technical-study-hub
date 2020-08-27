@@ -5,18 +5,19 @@ import React, {
   ChangeEvent,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { Dropdown, Button, TextInput } from "react-materialize";
 import { CirclePicker } from "react-color";
 import styled from "styled-components";
+import Alert from "@material-ui/lab/Alert";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 import { Tag, TagFormProps } from "../../types";
-
 import { useDataProvider } from "../../hooks/DataProvider";
 
 type ColorPreviewProps = {
   color: string;
 };
 
-const TagNameInput = styled(TextInput)`
+const TagNameInput = styled(TextField)`
   margin-right: 3rem;
   height: 30px;
 `;
@@ -33,30 +34,33 @@ const ColorPreview = styled.div`
   }
 `;
 
-const FormContainer = styled.div`
+const InputContainer = styled.div`
   display: flex;
   place-items: center;
   justify-content: center;
 `;
 
-const ColorDropdown = styled(Dropdown)`
-  height: fit-content;
+const StyledButton = styled(Button)`
   margin: 0 2rem 0 2rem;
-  width: 300px !important;
 `;
 
-const StyledButton = styled(Button)`
-  margin: 0 2rem; 0 2rem;
+const FormContainer = styled.div`
+  display: flex;
+  place-items: center;
+  flex-direction: column;
 `;
 
 const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
   const { tags, createTag, updateTag } = useDataProvider();
   const [currentTagName, setCurrentTagName] = useState<string>("");
   const [currentTagColor, setCurrentTagColor] = useState<string>("#AAA");
+  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const history = useHistory();
 
   useEffect(() => {
-    // grab the corresponding tag details
+    // grab the corresponding tag details - only for updating
     if (tagId && tags.length > 0) {
       const specificTag: Tag | undefined = tags.find(
         (tag: Tag) => tag._id === tagId
@@ -88,8 +92,10 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
     let success = false;
     try {
       success = await createTag(currentTagName, currentTagColor);
+      setErrorMessage("");
       return success;
     } catch (err) {
+      setErrorMessage(err.response.data.message);
       return success;
     }
   };
@@ -101,40 +107,66 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
       history.push("/tags", { updateSuccess: true });
       return true;
     } catch (err) {
-      console.log(err);
+      setErrorMessage(err.response.data.message);
       return false;
     }
   };
 
   return (
     <FormContainer>
-      <TagNameInput
-        name="tagName"
-        label="Tag Name"
-        onChange={handleTagNameChange}
-        value={currentTagName}
-      />
-      <ColorDropdown trigger={<ColorPreview color={currentTagColor} />}>
-        <CirclePicker
-          color={currentTagColor}
-          onChangeComplete={handleColorChange}
+      {errorMessage !== "" && <Alert severity="error">{errorMessage}</Alert>}
+      <InputContainer>
+        <TagNameInput
+          name="tagName"
+          label="Tag Name"
+          onChange={handleTagNameChange}
+          value={currentTagName}
         />
-      </ColorDropdown>
-      {isUpdate ? (
-        <StyledButton
-          className="light-blue lighten-2 hoverable"
-          onClick={handleUpdateTag}
+        <TextField
+          onClick={() => {
+            console.log("OPEN");
+            setShowColorPicker(true);
+          }}
         >
-          Update Tag
-        </StyledButton>
-      ) : (
-        <StyledButton
-          className="light-blue lighten-2 hoverable"
-          onClick={handleAddTag}
-        >
-          Add Tag
-        </StyledButton>
-      )}
+          {showColorPicker && (
+            <div style={{ position: "relative" }}>
+              <div style={{ position: "absolute" }}>
+                <div
+                  style={{
+                    position: "fixed",
+                    top: "0px",
+                    right: "0px",
+                    bottom: "0px",
+                    left: "0px",
+                  }}
+                  onClick={() => {}}
+                />
+                <CirclePicker
+                  color={currentTagColor}
+                  onChangeComplete={handleColorChange}
+                />
+              </div>
+            </div>
+          )}
+        </TextField>
+        {isUpdate ? (
+          <StyledButton
+            color="primary"
+            variant="contained"
+            onClick={handleUpdateTag}
+          >
+            Update Tag
+          </StyledButton>
+        ) : (
+          <StyledButton
+            color="primary"
+            variant="contained"
+            onClick={handleAddTag}
+          >
+            Add Tag
+          </StyledButton>
+        )}
+      </InputContainer>
     </FormContainer>
   );
 };

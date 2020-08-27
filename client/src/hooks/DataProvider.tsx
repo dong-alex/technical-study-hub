@@ -15,10 +15,7 @@ export const DataProvider: FunctionComponent<{}> = ({ children }) => {
     deleteQuestion,
   } = useQuestions();
 
-  // custom hooks to handle the logic - dispatch to retain the new state to distribute - CRUD API used to handle the global state
-
   // TODO: create the intermediate states per request for the loading states
-
   return (
     <DataContext.Provider
       value={{

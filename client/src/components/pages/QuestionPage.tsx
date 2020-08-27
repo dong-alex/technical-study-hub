@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { NavLink, RouteComponentProps } from "react-router-dom";
-import { Button, Icon } from "react-materialize";
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import NavigationLayout from "../layout/NavigationLayout";
 import QuestionForm from "../utils/QuestionForm";
 import { QuestionPageParams } from "../../types";
@@ -31,7 +32,11 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
     <NavigationLayout>
       <Header>
         <NavLink to="/questions">
-          <Button floating icon={<Icon>chevron_left</Icon>} />
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<ChevronLeft />}
+          />
         </NavLink>
         <Title>Question Details</Title>
       </Header>

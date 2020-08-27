@@ -1,5 +1,4 @@
 import React from "react";
-import { ProgressBar } from "react-materialize";
 import styled from "styled-components";
 
 const ProgressBarContainer = styled.div`
@@ -11,7 +10,7 @@ const ProgressBarContainer = styled.div`
 const LoadingOverlay = () => {
   return (
     <ProgressBarContainer>
-      <ProgressBar />
+      <div></div>
     </ProgressBarContainer>
   );
 };

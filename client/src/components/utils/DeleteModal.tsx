@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
-import { Modal, Button } from "react-materialize";
+import { DialogActions, Button, DialogTitle, Dialog } from "@material-ui/core";
 
 type DeleteModalProps = {
   open: boolean;
   onDelete: () => void; // shell function to call within the parent component
-  onModalClose: Function;
+  onModalClose: () => void;
 };
 
 const DeleteModal: FunctionComponent<DeleteModalProps> = ({
@@ -13,46 +13,22 @@ const DeleteModal: FunctionComponent<DeleteModalProps> = ({
   onModalClose,
 }) => {
   return (
-    <Modal
-      actions={[
-        <Button
-          flat
-          modal="close"
-          node="button"
-          waves="green"
-          onClick={() => {
-            onModalClose();
-          }}
-        >
-          No
-        </Button>,
-        <Button
-          flat
-          modal="close"
-          node="button"
-          waves="green"
-          onClick={() => {
-            onDelete();
-          }}
-        >
-          Yes
-        </Button>,
-      ]}
-      fixedFooter
-      header="Delete item"
+    <Dialog
       open={open}
-      options={{
-        dismissible: true,
-        endingTop: "10%",
-        inDuration: 250,
-        opacity: 0.5,
-        outDuration: 250,
-        preventScrolling: true,
-        startingTop: "4%",
+      onClose={() => {
+        onModalClose();
       }}
     >
-      Are you sure you want to delete this item?
-    </Modal>
+      <DialogTitle>Are you sure you want to delete this item?</DialogTitle>
+      <DialogActions>
+        <Button color="secondary" onClick={onModalClose}>
+          No
+        </Button>
+        <Button color="primary" onClick={onDelete}>
+          Yes
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

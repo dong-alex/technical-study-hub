@@ -2,14 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import { AuthenticationProvider } from "./components/auth/AuthenticationProvider";
-import { StylesProvider } from "@material-ui/core/styles";
+import CssBaseLine from "@material-ui/core/CssBaseline";
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthenticationProvider>
-      <StylesProvider injectFirst>
-        <App />
-      </StylesProvider>
+      <CssBaseLine />
+      <App />
     </AuthenticationProvider>
   </React.StrictMode>,
   document.getElementById("root")

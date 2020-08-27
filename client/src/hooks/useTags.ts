@@ -5,7 +5,7 @@ import { tagsReducer, TAGS_INITIAL_STATE } from "./reducers/tagsReducer";
 import { useAuthProvider } from "../components/auth/AuthenticationProvider";
 import { Tag, TagsHookState } from "../types";
 
-// TODO: use the questions to obtain the tags <-> questions association
+// API service throws the errors given by the server. Caller handles thrown errors.
 const useTags = (): TagsHookState => {
   const [tagState, dispatch] = useReducer(tagsReducer, TAGS_INITIAL_STATE);
   const { tags, loadingTags } = tagState;
@@ -20,93 +20,77 @@ const useTags = (): TagsHookState => {
       await getTags();
     };
     fetch();
-  }, []);
+  }, [authenticated]);
 
   const getTags = async (): Promise<Tag[] | Error> => {
-    // not authenticated or no user associated to the token
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
-
     try {
       const {
-        data: { tags: tagsResponse },
+        status,
+        data: { tags: tagsResponse, message },
       } = await axios.get("/api/v1/tags");
-      dispatch({
-        type: TagActions.FETCHED_TAGS,
-        payload: { tags: tagsResponse },
-      });
 
-      return tagsResponse;
+      if (status === 200) {
+        dispatch({
+          type: TagActions.FETCHED_TAGS,
+          payload: { tags: tagsResponse },
+        });
+
+        return tagsResponse;
+      }
+
+      throw Error(message);
     } catch (err) {
       console.log("Error grabbing tags", err.message);
       return []; // internal function to handle with
     }
   };
 
-  // TODO: update the tag information - needs to be given the ID to change
   const updateTag = async (
     tagId: string,
     newTagName: string,
     newTagColor: string
   ): Promise<Tag | Error> => {
-    try {
-      if (tagId === "") {
-        throw new Error("Empty tag name. Please try again.");
-      }
+    const {
+      status,
+      data: { tag, message },
+    } = await axios.put(`/api/v1/tags/${tagId}`, {
+      tagName: newTagName,
+      tagColor: newTagColor,
+    });
 
-      if (!user || !token) {
-        throw new Error("No user found. Please try again.");
-      }
-
-      const {
-        data: { tag },
-      } = await axios.put(`/api/v1/tags/${tagId}`, {
-        tagName: newTagName,
-        tagColor: newTagColor,
-      });
+    // succesful requests
+    if (status === 200) {
       dispatch({ type: TagActions.UPDATED_TAG, payload: { tag } });
       return tag;
-    } catch (err) {
-      console.log(err.message);
-      throw err;
     }
+
+    // database errors or invalid data throws the specific message associated
+    throw Error(message);
   };
 
   const createTag = async (
     tagName: string,
     tagColor: string
   ): Promise<Tag | Error> => {
-    // TODO: input validation
-
     try {
-      if (tagName === "") {
-        throw new Error("Empty tag name. Please try again.");
-      }
-
-      if (!user || !token) {
-        throw new Error("No user found. Please try again.");
-      }
-
       const {
         data: { tag },
       } = await axios.post("/api/v1/tags", { tagName, tagColor });
       dispatch({ type: TagActions.ADDED_TAG, payload: tag });
       return tag;
     } catch (err) {
-      console.log("Error creating tag", err.message);
+      // there has been an error somewhere - improper validation
       throw err;
     }
   };
 
+  // returns true on succesful deletion, otherwise an error
   const deleteTag = async (tagId: string): Promise<boolean | Error> => {
     try {
-      if (!user || !token) {
-        throw new Error("No user found. Please try again.");
-      }
       const {
         data: { success },
       } = await axios.delete(`/api/v1/tags/${tagId}`);
+
       dispatch({
         type: TagActions.REMOVED_TAG,
         payload: { deletedTagId: tagId },

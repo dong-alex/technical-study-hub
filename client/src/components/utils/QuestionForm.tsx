@@ -5,7 +5,6 @@ import React, {
   ChangeEvent,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, TextInput } from "react-materialize";
 import styled from "styled-components";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -14,6 +13,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Chip from "@material-ui/core/Chip";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControl from "@material-ui/core/FormControl";
+import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -81,7 +81,7 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
   isUpdate,
 }) => {
   const { tags, questions, createQuestion, updateQuestion } = useDataProvider();
-  const [currentDifficulty, setCurrentDifficulty] = useState<string>("EASY");
+  const [currentDifficulty, setCurrentDifficulty] = useState<string>("Easy");
   const [currentQuestionName, setCurrentQuestionName] = useState<string>("");
   const [attachedTags, setAttachedTags] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
@@ -193,8 +193,7 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
   return (
     <FormContainer>
       <InputContainer>
-        <TextInput
-          noLayout
+        <TextField
           label="Question Title"
           onChange={handleQuestionNameChange}
           value={currentQuestionName}
@@ -202,9 +201,9 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
         <DifficultyContainer>
           <InputLabel>Difficulty</InputLabel>
           <Select value={currentDifficulty} onChange={handleDifficultyChange}>
-            <MenuItem value={"EASY"}>Easy</MenuItem>
-            <MenuItem value={"MEDIUM"}>Medium</MenuItem>
-            <MenuItem value={"HARD"}>Hard</MenuItem>
+            <MenuItem value={"Easy"}>Easy</MenuItem>
+            <MenuItem value={"Medium"}>Medium</MenuItem>
+            <MenuItem value={"Hard"}>Hard</MenuItem>
           </Select>
         </DifficultyContainer>
         <AttachContainer>
@@ -244,14 +243,16 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
         </AttachContainer>
         {isUpdate ? (
           <Button
-            className="light-blue lighten-2 hoverable"
+            color="primary"
+            variant="contained"
             onClick={handleUpdateQuestion}
           >
             Update
           </Button>
         ) : (
           <Button
-            className="light-blue lighten-2 hoverable"
+            color="primary"
+            variant="contained"
             onClick={handleAddQuestion}
           >
             Add Question
@@ -267,10 +268,7 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
           onChange={handleNoteInputChange}
           value={noteInput}
         />
-        <Button
-          className="light-blue lighten-2 hoverable"
-          onClick={handleAddNote}
-        >
+        <Button color="primary" variant="contained" onClick={handleAddNote}>
           Add Note
         </Button>
       </InputContainer>

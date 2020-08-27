@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { NavLink, RouteComponentProps } from "react-router-dom";
-import { Icon, Button } from "react-materialize";
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import NavigationLayout from "../layout/NavigationLayout";
 import TagForm from "../utils/TagForm";
 import { TagPageParams } from "../../types";
@@ -31,7 +32,11 @@ const TagPage: FunctionComponent<TagPageProps> = ({
     <NavigationLayout>
       <Header>
         <NavLink to="/tags">
-          <Button floating icon={<Icon>chevron_left</Icon>} />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<ChevronLeft />}
+          />
         </NavLink>
         <Title>Tag Details</Title>
       </Header>

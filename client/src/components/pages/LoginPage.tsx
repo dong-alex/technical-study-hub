@@ -1,7 +1,12 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { TextInput, Button, Icon } from "react-materialize";
 import NavigationLayout from "../layout/NavigationLayout";
+import { Button, TextField } from "@material-ui/core";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
+import SendIcon from "@material-ui/icons/Send";
+import LockIcon from "@material-ui/icons/Lock";
+import EmailIcon from "@material-ui/icons/Email";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import { LoginPageProps } from "../../types";
 import "../../sass/loginPage.scss";
 
@@ -57,40 +62,44 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
         <form className="form">
           <section className="registration-form">
             <h4>No account? Register here</h4>
-            <TextInput
-              icon="email"
-              name="email"
+            <TextField
               label="Email"
               onChange={handleEmailChange}
               value={email}
-              validate
-              email
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
-            <TextInput
-              icon="enhanced_encryption"
-              name="password"
+            <TextField
               label="Password"
               onChange={handlePasswordChange}
               value={password}
-              password
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
-            <TextInput
-              icon="person"
+            <TextField
               name="name"
-              error="Invalid name"
               label="Name"
               onChange={handleNameChange}
               value={name}
             />
 
             <Button
-              node="button"
-              waves="light"
-              className="register-button light-blue lighten-2"
+              color="primary"
+              variant="contained"
+              startIcon={<SendIcon />}
               onClick={handleRegistration}
             >
               Sign-up
-              <Icon right>send</Icon>
             </Button>
           </section>
         </form>
@@ -98,44 +107,48 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
         <form className="form">
           <section className="registration-form">
             <h4>Login to your account</h4>
-            <TextInput
-              icon="email"
-              name="email"
-              error="Invalid email"
+            <TextField
               label="Email"
               onChange={handleEmailChange}
               value={email}
-              validate
-              email
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <EmailIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
-            <TextInput
-              icon="enhanced_encryption"
-              name="password"
+            <TextField
               label="Password"
               onChange={handlePasswordChange}
               value={password}
-              password
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
             <section className="button-section">
               <Button
-                waves="light"
+                color="primary"
+                variant="contained"
                 onClick={handleLogin}
-                className="login-button light-blue lighten-2"
+                startIcon={<SendIcon />}
+                className="login-button"
               >
                 Submit
-                <Icon right tiny>
-                  send
-                </Icon>
               </Button>
               <Button
-                waves="light"
+                color="primary"
+                variant="contained"
                 className="register-button red lighten-3"
+                startIcon={<AssignmentIndIcon />}
                 onClick={handleRegisterChange}
               >
                 Register
-                <Icon right tiny>
-                  assignment
-                </Icon>
               </Button>
             </section>
           </section>

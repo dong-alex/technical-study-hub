@@ -6,7 +6,6 @@ import {
   Redirect,
 } from "react-router-dom";
 import "./sass/app.scss";
-import "materialize-css";
 import HomePage from "./components/pages/HomePage";
 import LoginPage from "./components/pages/LoginPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
@@ -17,11 +16,12 @@ import QuestionDashboardPage from "./components/pages/QuestionDashboardPage";
 import TagPage from "./components/pages/TagPage";
 import QuestionPage from "./components/pages/QuestionPage";
 import { AppProps } from "./types";
+import { DataProvider } from "./hooks/DataProvider";
 
 const App: FunctionComponent<AppProps> = () => {
   const { authenticated } = useAuthProvider();
   return (
-    <div className="root">
+    <DataProvider>
       <Router>
         <Switch>
           <PrivateRoute
@@ -45,7 +45,7 @@ const App: FunctionComponent<AppProps> = () => {
           <DynamicPrivateRoute
             authenticated={authenticated}
             path="/tags/:id"
-            component={TagPage}
+          component={TagPage}
           />
           <DynamicPrivateRoute
             authenticated={authenticated}
@@ -56,12 +56,12 @@ const App: FunctionComponent<AppProps> = () => {
             path="/login"
             exact
             component={
-              authenticated ? () => <Redirect to="/questions" /> : LoginPage
+              authenticated ? () => <Redirect to="/tags" /> : LoginPage
             }
           />
         </Switch>
       </Router>
-    </div>
+    </DataProvider>
   );
 };
 

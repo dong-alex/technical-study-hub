@@ -1,11 +1,14 @@
 import React, { FunctionComponent } from "react";
-import "materialize-css";
-import { Navbar, NavItem, Icon, Row, Col } from "react-materialize";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import "../../sass/navigationLayout.scss";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
-import { DataProvider } from "../../hooks/DataProvider";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  MenuList,
+  MenuItem,
+} from "@material-ui/core";
 
 type NavigationLayoutProps = {
   children: any;
@@ -17,11 +20,42 @@ const MainContainer = styled.div`
   width: 100%;
 `;
 
-const Sidebar = styled.ul`
+const NavContainer = styled(MenuList)`
   padding: 0px;
-  margin: 0px;
+  margin: 0 0 0 auto;
   display: flex;
-  flex-direction: column;
+
+  a {
+    user-select: none;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 1.5rem;
+    transition: $transition-speed;
+    border: 0;
+    &:hover {
+      background: #1e88e5;
+      color: white;
+    }
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+`;
+
+const NavItem = styled(NavLink)`
+  color: white;
+`;
+
+const LeftContainer = styled.div`
+  flex: 1;
+`;
+
+const StyledToolbar = styled(Toolbar)`
+  padding-right: 0;
 `;
 
 const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
@@ -30,34 +64,30 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
   const { authenticated, loaded, onLogout } = useAuthProvider();
   return (
     loaded && (
-      <DataProvider>
-        <div className="navigation-root">
-          <Navbar
-            alignLinks="right"
-            className="main-navbar light-blue darken-2"
-            brand={<span>Technical Study Hub</span>}
-            menuIcon={<Icon>menu</Icon>}
-            options={{
-              draggable: true,
-              edge: "left",
-              inDuration: 250,
-              outDuration: 200,
-              preventScrolling: true,
-            }}
-          >
-            <NavLink to="/tags">Tags</NavLink>
-            <NavLink to="/questions">Questions</NavLink>
-            {authenticated ? (
-              <NavLink to="/login" onClick={onLogout}>
-                Logout
-              </NavLink>
-            ) : (
-              <NavLink to="/login">Login</NavLink>
-            )}
-          </Navbar>
-          <MainContainer className="center-align">{children}</MainContainer>
-        </div>
-      </DataProvider>
+      <div className="navigation-root">
+        <AppBar position="static">
+          <StyledToolbar>
+            <LeftContainer>
+              <Typography variant="h5" noWrap>
+                Technical Study Hub
+              </Typography>
+            </LeftContainer>
+
+            <NavContainer>
+              <NavItem to="/tags">Tags</NavItem>
+              <NavItem to="/questions">Questions</NavItem>
+              {authenticated ? (
+                <NavItem to="/login" onClick={onLogout}>
+                  Logout
+                </NavItem>
+              ) : (
+                <NavItem to="/login">Login</NavItem>
+              )}
+            </NavContainer>
+          </StyledToolbar>
+        </AppBar>
+        <MainContainer className="center-align">{children}</MainContainer>
+      </div>
     )
   );
 };
