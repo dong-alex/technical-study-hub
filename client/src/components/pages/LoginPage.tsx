@@ -77,6 +77,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
             <TextField
               label="Password"
               onChange={handlePasswordChange}
+              type="password"
               value={password}
               InputProps={{
                 startAdornment: (

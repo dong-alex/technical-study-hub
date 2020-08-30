@@ -8,16 +8,26 @@ import {
   Typography,
   MenuList,
   MenuItem,
+  Container,
 } from "@material-ui/core";
 
 type NavigationLayoutProps = {
   children: any;
 };
 
-const MainContainer = styled.div`
-  margin: 1rem;
+const MainContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
+
+  h1 {
+    text-align: center;
+  }
+
+  h2 {
+    text-align: center;
+  }
 `;
 
 const NavContainer = styled(MenuList)`
@@ -72,7 +82,6 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
                 Technical Study Hub
               </Typography>
             </LeftContainer>
-
             <NavContainer>
               <NavItem to="/tags">Tags</NavItem>
               <NavItem to="/questions">Questions</NavItem>
