@@ -9,6 +9,7 @@ export type Question = {
   difficulty: string;
   tags: Tag[];
   notes: string[];
+  url: string;
   userId: string;
   createdDate: Date;
 };
@@ -25,15 +26,17 @@ export type QuestionsHookState = {
     name: string,
     difficulty: string,
     tags: string[],
-    notes: string[]
+    notes: string[],
+    url: string
   ) => Promise<Question | Error>;
   updateQuestion: (
     questionId: string,
     questionName: string,
     difficulty: string,
     attachedTags: string[], // reference representation - populated on request
-    notes: string[]
-  ) => Promise<boolean | Error>;
+    notes: string[],
+    url: string
+  ) => Promise<Question | Error>;
   deleteQuestion: (questionId: string) => Promise<boolean | Error>;
 };
 
