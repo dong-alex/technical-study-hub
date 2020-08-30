@@ -4,13 +4,13 @@ import {
   questionsReducer,
   QUESTIONS_INITIAL_STATE,
 } from "./reducers/questionsReducer";
-import { QuestionsHookState } from "../types";
+import { Tag, Question, QuestionsHookState } from "../types";
 import QuestionActions from "./actions/questionActions";
 import { useAuthProvider } from "../components/auth/AuthenticationProvider";
 
 export type DifficultyOptions = "EASY" | "MEDIUM" | "HARD" | string;
 
-const useQuestions = (): QuestionsHookState => {
+const useQuestions = (tags: Tag[]): QuestionsHookState => {
   const [questionState, dispatch] = useReducer(
     questionsReducer,
     QUESTIONS_INITIAL_STATE
@@ -23,17 +23,14 @@ const useQuestions = (): QuestionsHookState => {
 
   // TODO: axios get /api/v1/questions
   const getQuestions = async () => {
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
-
     try {
       const {
         data: { questions },
       } = await axios.get("/api/v1/questions");
+      console.log("UseQuestions", questions);
       dispatch({
         type: QuestionActions.FETCHED_QUESTIONS,
-        payload: { questions },
+        payload: { questions: [...questions] },
       });
       return questions;
     } catch (err) {
@@ -51,22 +48,17 @@ const useQuestions = (): QuestionsHookState => {
       await getQuestions();
     };
     fetch();
-  }, []);
+
+    // if there are changes in the tags - propogates changes into the questions
+  }, [authenticated, tags]);
 
   const createQuestion = async (
     name: string,
     difficulty: DifficultyOptions,
     tags: string[],
-    notes: string[]
+    notes: string[],
+    url: string
   ) => {
-    if (name === "") {
-      throw new Error("Empty name. Please try again.");
-    }
-
-    if (!user || !token) {
-      throw new Error("No user found. Please try again.");
-    }
-
     try {
       const {
         data: { question },
@@ -75,6 +67,7 @@ const useQuestions = (): QuestionsHookState => {
         difficulty,
         tags,
         notes,
+        url,
       });
       dispatch({
         type: QuestionActions.ADDED_QUESTION,
@@ -82,26 +75,25 @@ const useQuestions = (): QuestionsHookState => {
       });
       return question;
     } catch (err) {
+      console.log(err.message);
       throw err;
     }
   };
 
   // TODO: axios delete question DELETE /api/v1/questions
-  const deleteQuestion = async (questionId: string) => {
+  const deleteQuestion = async (
+    questionId: string
+  ): Promise<boolean | Error> => {
     try {
-      const { data: success } = await axios.delete(
-        `/api/v1/questions/${questionId}`
-      );
-      if (success) {
-        dispatch({
-          type: QuestionActions.REMOVED_QUESTION,
-          payload: { deletedQuestionId: questionId },
-        });
-      } else {
-        console.log("Did not delete any question");
-      }
+      const {
+        data: { question },
+      } = await axios.delete(`/api/v1/questions/${questionId}`);
+      dispatch({
+        type: QuestionActions.REMOVED_QUESTION,
+        payload: { deletedQuestionId: questionId },
+      });
 
-      return success;
+      return true;
     } catch (err) {
       console.log(err);
       return false;
@@ -113,28 +105,28 @@ const useQuestions = (): QuestionsHookState => {
     questionName: string,
     difficulty: string,
     attachedTags: string[],
-    notes: string[]
-  ) => {
+    notes: string[],
+    url: string
+  ): Promise<Question | Error> => {
     try {
-      const { data: question } = await axios.put(
-        `/api/v1/questions/${questionId}`,
-        {
-          name: questionName,
-          difficulty,
-          tags: attachedTags,
-          notes,
-        }
-      );
+      const {
+        data: { question },
+      } = await axios.put(`/api/v1/questions/${questionId}`, {
+        name: questionName,
+        difficulty,
+        tags: attachedTags,
+        notes,
+        url,
+      });
+      console.log(question);
       dispatch({
         type: QuestionActions.EDITED_QUESTION,
         payload: { question },
       });
-      return true;
+      return question;
     } catch (err) {
       console.log(err);
-      return false;
-    } finally {
-      return true;
+      throw err;
     }
   };
 

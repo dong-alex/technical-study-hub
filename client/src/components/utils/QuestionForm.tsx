@@ -6,6 +6,7 @@ import React, {
 } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import Alert from "@material-ui/lab/Alert";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Input from "@material-ui/core/Input";
@@ -30,18 +31,18 @@ type ColorPreviewProps = {
 };
 
 const FormContainer = styled.div`
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const NoteInput = styled(TextField)`
-  max-width: 500px;
-  margin: 0px 2rem;
+  margin: 1rem 2rem 1rem 0;
 `;
 
 const InputContainer = styled.div`
   display: flex;
   place-items: center;
-  justify-content: center;
+  width: 100%;
 `;
 
 const DifficultyContainer = styled(FormControl)`
@@ -62,6 +63,7 @@ const ChipDisplay = styled.div`
 
 const CustomChip = styled(Chip)`
   margin: 0.5rem;
+  color: white;
   background: ${(props: ColorPreviewProps) => props.backgroundcolor};
 `;
 
@@ -69,6 +71,11 @@ const NoteList = styled(List)`
   margin: 0 5rem;
   display: flex;
   flex-direction: column;
+`;
+
+const UrlInput = styled(TextField)`
+  width: 100%;
+  margin: 1rem 0;
 `;
 
 type QuestionFormState = {
@@ -86,6 +93,8 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
   const [attachedTags, setAttachedTags] = useState<string[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   const [noteInput, setNoteInput] = useState<string>("");
+  const [leetcodeUrl, setLeetcodeUrl] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const history = useHistory();
 
   useEffect(() => {
@@ -101,12 +110,14 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
           difficulty,
           tags: attachedTags,
           notes: attachedNotes,
+          url,
         } = specificQuestion;
         const tagIds = attachedTags.map((tag: Tag) => tag._id);
         setCurrentQuestionName(name);
         setCurrentDifficulty(difficulty);
         setAttachedTags(tagIds);
         setNotes(attachedNotes);
+        setLeetcodeUrl(url);
       } else {
         // these errors should not be hit
         throw new Error("Questions empty or questionId invalid");
@@ -139,6 +150,15 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
     setCurrentDifficulty(event.target.value);
   };
 
+  const resetFields = () => {
+    setCurrentQuestionName("");
+    setCurrentDifficulty("Easy");
+    setAttachedTags([]);
+    setNotes([]);
+    setLeetcodeUrl("");
+    setErrorMessage("");
+  };
+
   // handle selecting values via materialize-css library
   const handleAddQuestion = async (event: any) => {
     event.preventDefault();
@@ -147,10 +167,13 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
         currentQuestionName,
         currentDifficulty,
         attachedTags,
-        notes
+        notes,
+        leetcodeUrl
       );
+      resetFields();
     } catch (err) {
       console.log(err);
+      setErrorMessage(err.response.data.message);
     }
   };
 
@@ -162,11 +185,13 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
         currentQuestionName,
         currentDifficulty,
         attachedTags,
-        notes
+        notes,
+        leetcodeUrl
       );
       history.push("/questions", { updateSuccess: true });
     } catch (err) {
       console.log(err.message);
+      setErrorMessage(err.response.data.message);
     }
   };
 
@@ -176,11 +201,13 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
     }
 
     if (notes.includes(noteInput)) {
+      setErrorMessage("Duplicate Note. Please enter a different note.");
       return;
     }
 
     setNotes([...notes, noteInput]);
     setNoteInput("");
+    setErrorMessage("");
   };
 
   const handleRemoveNote = (deletedText: string) => {
@@ -190,11 +217,17 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
     setNotes(newNotes);
   };
 
+  const handleUrlChange = (event: any) => {
+    setLeetcodeUrl(event.target.value);
+  };
+
   return (
     <FormContainer>
+      {errorMessage !== "" && <Alert severity="error">{errorMessage}</Alert>}
       <InputContainer>
         <TextField
-          label="Question Title"
+          label="Question Name"
+          required
           onChange={handleQuestionNameChange}
           value={currentQuestionName}
         />
@@ -259,6 +292,14 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
           </Button>
         )}
       </InputContainer>
+      <UrlInput
+        fullWidth
+        required
+        label="Leetcode URL"
+        placeholder="URL"
+        onChange={handleUrlChange}
+        value={leetcodeUrl}
+      />
       <InputContainer>
         <NoteInput
           fullWidth
@@ -269,12 +310,12 @@ const QuestionForm: FunctionComponent<QuestionFormState> = ({
           value={noteInput}
         />
         <Button color="primary" variant="contained" onClick={handleAddNote}>
-          Add Note
+          Add
         </Button>
       </InputContainer>
       <NoteList
         subheader={
-          <ListSubheader>
+          <ListSubheader style={{ textAlign: "center" }}>
             {currentQuestionName === ""
               ? ""
               : `Notes for ${currentQuestionName}`}

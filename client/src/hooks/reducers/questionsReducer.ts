@@ -13,6 +13,8 @@ export const questionsReducer = (state: QuestionsReducerState, action: any) => {
   const { payload, type } = action;
   const { questions } = state;
 
+  let newQuestions;
+
   switch (type) {
     case QuestionActions.ADDED_QUESTION:
       return {
@@ -21,22 +23,18 @@ export const questionsReducer = (state: QuestionsReducerState, action: any) => {
       };
     case QuestionActions.FETCHED_QUESTIONS:
       return {
-        questions: [...questions, ...payload.questions],
+        // completely override - previously would be [] - use other actions for changes
+        questions: [...payload.questions],
         loadingQuestions: false,
       };
     case QuestionActions.EDITED_QUESTION:
+      newQuestions = filterOutQuestions(payload.question._id, questions);
       return {
         ...state,
-        questions: [
-          ...filterOutQuestions(payload.question._id, questions),
-          payload.question,
-        ],
+        questions: [...newQuestions, payload.question],
       };
     case QuestionActions.REMOVED_QUESTION:
-      const newQuestions = filterOutQuestions(
-        payload.deletedQuestionId,
-        questions
-      );
+      newQuestions = filterOutQuestions(payload.deletedQuestionId, questions);
       console.log(newQuestions);
       return {
         ...state,

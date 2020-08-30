@@ -56,19 +56,9 @@ const CustomTable: FunctionComponent<CustomTableProps> = ({
   columns,
   data,
 }) => {
-  const [totalPages, setTotalPages] = useState<number>(1);
-  // const { page, handlePageUp, handlePageDown } = usePagination(totalPages);
-  // const {
-  //   tags,
-  //   questions,
-  //   deleteTag,
-  //   deleteQuestion,
-  //   loadingTags,
-  //   loadingQuestions,
-  // } = useDataProvider();
   const [displayData, setDisplayData] = useState<any[]>([]);
   const [itemsPerPage, setItemsPerPage] = useState<number>(10);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState<number>(0);
   const { getTableProps, headerGroups, rows, prepareRow } = useTable({
     columns,
     data: displayData,
@@ -78,7 +68,6 @@ const CustomTable: FunctionComponent<CustomTableProps> = ({
     let offset = page * itemsPerPage;
     let dataSet = data.slice(offset, offset + itemsPerPage);
     setDisplayData(dataSet);
-    setTotalPages(1 + data.length / itemsPerPage);
   }, [data, page]);
 
   const handleChangePage = (
@@ -127,7 +116,6 @@ const CustomTable: FunctionComponent<CustomTableProps> = ({
             return (
               <TableRow {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  console.log(cell.column);
                   return (
                     <TableCell {...cell.getCellProps([getCellProps(cell)])}>
                       {cell.render("Cell")}

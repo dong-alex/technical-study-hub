@@ -13,9 +13,10 @@ export const DataProvider: FunctionComponent<{}> = ({ children }) => {
     createQuestion,
     updateQuestion,
     deleteQuestion,
-  } = useQuestions();
+  } = useQuestions(tags);
 
-  // TODO: create the intermediate states per request for the loading states
+  // tag updates/deletions should propogate into the questions
+
   return (
     <DataContext.Provider
       value={{
