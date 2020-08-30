@@ -47,12 +47,15 @@ router.post(
         ...result,
         tags: tagIds,
         userId: mongoose.Types.ObjectId(req.user._id),
-      });
+      }).populate("tags");
 
       const document = await newQuestion.save();
+
+      // using the document that we have saved - get the document with all the references
+      const fullDocument = await Tag.populate(document, { path: "tags" });
       return res.status(200).json({
         message: "Succesfully added the following question into the database",
-        question: document,
+        question: fullDocument,
       });
     } catch (err) {
       console.log(err);

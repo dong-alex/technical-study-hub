@@ -35,7 +35,6 @@ export const questionsReducer = (state: QuestionsReducerState, action: any) => {
       };
     case QuestionActions.REMOVED_QUESTION:
       newQuestions = filterOutQuestions(payload.deletedQuestionId, questions);
-      console.log(newQuestions);
       return {
         ...state,
         questions: newQuestions,
