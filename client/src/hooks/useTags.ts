@@ -50,22 +50,19 @@ const useTags = (): TagsHookState => {
     newTagName: string,
     newTagColor: string
   ): Promise<Tag | Error> => {
-    const {
-      status,
-      data: { tag, message },
-    } = await axios.put(`/api/v1/tags/${tagId}`, {
-      tagName: newTagName,
-      tagColor: newTagColor,
-    });
-
-    // succesful requests
-    if (status === 200) {
+    try {
+      const {
+        data: { tag },
+      } = await axios.put(`/api/v1/tags/${tagId}`, {
+        tagName: newTagName,
+        tagColor: newTagColor,
+      });
       dispatch({ type: TagActions.UPDATED_TAG, payload: { tag } });
       return tag;
+    } catch (err) {
+      // database errors or invalid data throws the specific message associated
+      throw err;
     }
-
-    // database errors or invalid data throws the specific message associated
-    throw Error(message);
   };
 
   const createTag = async (

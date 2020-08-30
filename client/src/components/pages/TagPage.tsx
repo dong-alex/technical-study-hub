@@ -11,13 +11,13 @@ const Header = styled.div`
   display: flex;
   place-items: center;
   justify-content: center;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
 `;
 
-const Title = styled.h4`
-  margin: 0 0 0 0.5rem;
-  user-select: none;
+const RedirectButton = styled(Button)`
+  > span > span {
+    margin: 0;
+  }
+  margin-right: 1rem;
 `;
 
 interface TagPageProps extends RouteComponentProps<TagPageParams> {}
@@ -32,15 +32,15 @@ const TagPage: FunctionComponent<TagPageProps> = ({
     <NavigationLayout>
       <Header>
         <NavLink to="/tags">
-          <Button
+          <RedirectButton
             variant="contained"
             color="primary"
             startIcon={<ChevronLeft />}
           />
         </NavLink>
-        <Title>Tag Details</Title>
+        <h1>Tag Details</h1>
       </Header>
-      <h6>Update Your Tag</h6>
+      <h2>Update Your Tag</h2>
       <TagForm isUpdate={true} tagId={tagId} />
     </NavigationLayout>
   );

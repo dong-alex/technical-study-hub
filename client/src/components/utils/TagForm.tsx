@@ -5,13 +5,14 @@ import React, {
   ChangeEvent,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { CirclePicker } from "react-color";
 import styled from "styled-components";
 import Alert from "@material-ui/lab/Alert";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { Tag, TagFormProps } from "../../types";
+import { Tag, TagFormProps, Color } from "../../types";
 import { useDataProvider } from "../../hooks/DataProvider";
+import { Select, MenuItem, ListItemText } from "@material-ui/core";
+import colors from "../utils/colors";
 
 type ColorPreviewProps = {
   color: string;
@@ -19,24 +20,35 @@ type ColorPreviewProps = {
 
 const TagNameInput = styled(TextField)`
   margin-right: 3rem;
-  height: 30px;
+  // height: 30px;
 `;
 
 const ColorPreview = styled.div`
-  height: 2rem;
-  width: 2rem;
-  margin: 0 2rem 0 2rem;
-  border: 1px solid black;
+  height: 1rem;
+  width: 1rem;
+  margin: 0 1rem 0 0;
   background-color: ${(props: ColorPreviewProps) => props.color};
+`;
 
-  &:hover {
-    transform: scale(1.1);
+const ColorSelect = styled(Select)`
+  min-width: 120px;
+  max-width: 500px;
+
+  > div {
+    display: flex;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    place-items: center;
   }
+`;
+
+const ColorItem = styled(MenuItem)`
+  display: flex;
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  place-items: center;
 `;
 
 const InputContainer = styled.div`
   display: flex;
-  place-items: center;
   justify-content: center;
 `;
 
@@ -54,7 +66,6 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
   const { tags, createTag, updateTag } = useDataProvider();
   const [currentTagName, setCurrentTagName] = useState<string>("");
   const [currentTagColor, setCurrentTagColor] = useState<string>("#AAA");
-  const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const history = useHistory();
@@ -77,10 +88,6 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
       // set the current UI with these details
     }
   }, [tags, tagId]);
-
-  const handleColorChange = ({ hex }: { hex: string }) => {
-    setCurrentTagColor(hex);
-  };
 
   // TODO: validation with the string length of total # tags
   const handleTagNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -112,6 +119,10 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
     }
   };
 
+  const handleColorChange = (event: ChangeEvent<{ value: unknown }>) => {
+    setCurrentTagColor(event.target.value as string);
+  };
+
   return (
     <FormContainer>
       {errorMessage !== "" && <Alert severity="error">{errorMessage}</Alert>}
@@ -122,33 +133,14 @@ const TagForm: FunctionComponent<TagFormProps> = ({ tagId, isUpdate }) => {
           onChange={handleTagNameChange}
           value={currentTagName}
         />
-        <TextField
-          onClick={() => {
-            console.log("OPEN");
-            setShowColorPicker(true);
-          }}
-        >
-          {showColorPicker && (
-            <div style={{ position: "relative" }}>
-              <div style={{ position: "absolute" }}>
-                <div
-                  style={{
-                    position: "fixed",
-                    top: "0px",
-                    right: "0px",
-                    bottom: "0px",
-                    left: "0px",
-                  }}
-                  onClick={() => {}}
-                />
-                <CirclePicker
-                  color={currentTagColor}
-                  onChangeComplete={handleColorChange}
-                />
-              </div>
-            </div>
-          )}
-        </TextField>
+        <ColorSelect value={currentTagColor} onChange={handleColorChange}>
+          {colors.map(({ colorName, hex }: Color) => (
+            <ColorItem key={hex} value={hex}>
+              <ColorPreview color={hex} />
+              <ListItemText primary={colorName} />
+            </ColorItem>
+          ))}
+        </ColorSelect>
         {isUpdate ? (
           <StyledButton
             color="primary"

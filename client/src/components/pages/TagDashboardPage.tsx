@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
+import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -54,12 +55,22 @@ const TagDashboardPage: FunctionComponent<TagDashboardPageProps> = ({
       {
         Header: "Tag Name",
         accessor: "tagName",
+        Cell: ({ value, row }: any) => {
+          return (
+            <NavLink
+              style={{ textDecoration: "none" }}
+              to={`/tags/${row.original._id}`}
+            >
+              {value}
+            </NavLink>
+          );
+        },
       },
       {
         Header: "Color",
         accessor: "tagColor",
         // nullify the string output of the color string and just use color
-        Cell: ({ value }: { value: any }): null => {
+        Cell: ({ value }: any): null => {
           return null;
         },
       },
@@ -97,8 +108,8 @@ const TagDashboardPage: FunctionComponent<TagDashboardPageProps> = ({
 
   return (
     <NavigationLayout>
-      <h4>Tag Dashboard</h4>
-      <h6>Create New Tag</h6>
+      <h1>Tag Dashboard</h1>
+      <h2>Create New Tag</h2>
       <TagForm isUpdate={false} />
       {tags && (
         <CustomTable isTag columns={columns} data={tags} onDelete={deleteTag} />
