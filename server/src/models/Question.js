@@ -11,9 +11,6 @@ const QuestionSchema = new mongoose.Schema({
     type: String,
     minLength: 20, // should contain leetcode.com/problems/...
     maxLength: 300,
-    required: function () {
-      return this.url.includes("leetcode.com/problems");
-    },
   },
   difficulty: {
     type: String,

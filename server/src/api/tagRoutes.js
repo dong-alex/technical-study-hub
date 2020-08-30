@@ -103,7 +103,24 @@ router.delete(
   passport.authenticate("jwt", { session: false, failWithError: true }),
   async (req, res, next) => {
     try {
-      Tag.findByIdAndDelete(req.params.tagId);
+      await Tag.findByIdAndDelete(req.params.tagId);
+
+      // delete the tag in all questions used in the tag to the specific user
+      const questions = await Question.find({
+        userId: mongoose.Types.ObjectId(req.user._id),
+      });
+
+      // pull the tag Id if it exists in any of the questions
+      // TODO: create update for questions on the client end
+      questions.forEach(async (document) => {
+        console.log(document._id);
+        const response = await Question.findByIdAndUpdate(document._id, {
+          $pull: {
+            tags: mongoose.Types.ObjectId(req.params.tagId),
+          },
+        });
+        console.log(response);
+      });
       return res.status(200).json({
         message: "Tag has been deleted",
         success: true,

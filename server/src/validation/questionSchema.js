@@ -17,9 +17,11 @@ text'`,
       "any.required": `Question name is a required field`,
     }),
   url: Joi.string()
-    .uri({ scheme: [/https?/, "leetcode.com/problems"] })
+    .uri({ scheme: /https:?/ })
     .messages({
       "string.uri": `URL must direct to a valid leetcode problem`,
+      "string.uriCustomScheme": `URL must direct to a valid leetcode problem`,
+      "string.empty": `Empty URL. Please enter a valid leetcode URL.`,
     }),
   difficulty: Joi.string().valid("Easy", "Medium", "Hard").required().messages({
     "any.only": `Difficulty must be one of 'Easy', 'Medium', or 'Hard'`,

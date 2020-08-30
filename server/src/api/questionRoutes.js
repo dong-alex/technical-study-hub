@@ -11,6 +11,7 @@ router.get(
   "/",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   (req, res, next) => {
+    console.log("Finding questions for ", req.user._id);
     Question.find(
       { userId: mongoose.Types.ObjectId(req.user._id) },
       (err, docs) => {
@@ -55,6 +56,7 @@ router.post(
       });
     } catch (err) {
       console.log(err);
+      if (err.isJoi) err.status = 422;
       next(err);
     }
   }
@@ -66,21 +68,25 @@ router.delete(
   passport.authenticate("jwt", { session: false, failWithError: true }),
   async (req, res, next) => {
     try {
-      Question.findByIdAndDelete(req.params.questionId, {}, (err, success) => {
-        if (err) {
-          console.log(err);
-          next(err);
-        }
+      Question.findByIdAndDelete(
+        req.params.questionId,
+        {},
+        (err, removedQuestion) => {
+          if (err) {
+            console.log(err);
+            next(err);
+          }
 
-        if (success) {
-          return res.status(200).json({
-            message: "Question has been deleted",
-            success: success,
-          });
-        }
+          if (removedQuestion) {
+            return res.status(200).json({
+              message: "Question has been deleted",
+              question: removedQuestion,
+            });
+          }
 
-        throw Error("There was an error with deleting the question");
-      });
+          throw Error("There was an error with deleting the question");
+        }
+      );
     } catch (err) {
       console.log("DELETE questions", err);
       next(err);
@@ -94,39 +100,34 @@ router.put(
   "/:questionId",
   passport.authenticate("jwt", { session: false, failWithError: true }),
   async (req, res, next) => {
-    // construct the object to update the question with
-    const result = await questionValidationSchema.validateAsync(req.body);
+    try {
+      // construct the object to update the question with
+      const result = await questionValidationSchema.validateAsync(req.body);
 
-    // convert tags into the objectId representation
-    const tagIds = result.tags.map((stringId) =>
-      mongoose.Types.ObjectId(stringId)
-    );
+      // convert tags into the objectId representation
+      console.log(result);
+      const tagIds = result.tags.map((stringId) =>
+        mongoose.Types.ObjectId(stringId)
+      );
 
-    Question.findOneAndUpdate(
-      { _id: req.params.questionId },
-      {
-        ...result,
-        tagIds,
-      },
-      { upsert: true },
-      (err, question) => {
-        if (err) {
-          console.log(err);
-          next(err);
-        }
-
-        if (question) {
-          return res.status(200).json({
-            message: "Question has been updated",
-            question: question,
-          });
-        }
-        return res.status(500).json({
-          message: "Question not found",
-          question: null,
-        });
-      }
-    );
+      console.log(tagIds);
+      const question = await Question.findOneAndUpdate(
+        { _id: req.params.questionId },
+        {
+          ...result,
+          tags: tagIds,
+        },
+        { upsert: true, new: true }
+      ).populate("tags");
+      // question updated - but need to grab the actual tags and not their ids for the client
+      return res.status(200).json({
+        message: "Question has been updated",
+        question,
+      });
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 );
 
