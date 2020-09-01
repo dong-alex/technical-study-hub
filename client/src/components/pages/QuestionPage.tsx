@@ -11,16 +11,16 @@ const Header = styled.div`
   display: flex;
   place-items: center;
   justify-content: center;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
-`;
-
-const Title = styled.h4`
-  margin: 0 0 0 0.5rem;
-  user-select: none;
 `;
 
 interface QuestionPageProps extends RouteComponentProps<QuestionPageParams> {}
+
+const RedirectButton = styled(Button)`
+  > span > span {
+    margin: 0;
+  }
+  margin-right: 1rem;
+`;
 
 // singular tag overview page
 const QuestionPage: FunctionComponent<QuestionPageProps> = ({
@@ -32,15 +32,15 @@ const QuestionPage: FunctionComponent<QuestionPageProps> = ({
     <NavigationLayout>
       <Header>
         <NavLink to="/questions">
-          <Button
+          <RedirectButton
             color="primary"
             variant="contained"
             startIcon={<ChevronLeft />}
           />
         </NavLink>
-        <Title>Question Details</Title>
+        <h1>Question Details</h1>
       </Header>
-      <h6>Update Your Question</h6>
+      <h2>Update Your Question</h2>
       <QuestionForm questionId={questionId} isUpdate />
     </NavigationLayout>
   );
