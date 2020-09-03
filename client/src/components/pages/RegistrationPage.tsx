@@ -5,7 +5,6 @@ import {
   Button,
   TextField,
   InputAdornment,
-  Divider,
   Typography,
 } from "@material-ui/core";
 import { useAuthProvider } from "../auth/AuthenticationProvider";
@@ -13,15 +12,7 @@ import SendIcon from "@material-ui/icons/Send";
 import LockIcon from "@material-ui/icons/Lock";
 import EmailIcon from "@material-ui/icons/Email";
 import PersonIcon from "@material-ui/icons/Person";
-import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import { RegistrationPageProps } from "../../types";
-
-const ButtonContainer = styled.div`
-  padding: 1rem 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
 
 const Headline = styled(Typography)`
   padding: 1rem 0;

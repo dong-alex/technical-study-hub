@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { NavLink, RouteComponentProps } from "react-router-dom";
 import styled from "styled-components";
-import Button from "@material-ui/core/Button";
+import { Button } from "@material-ui/core";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
 import NavigationLayout from "../layout/NavigationLayout";
 import TagForm from "../utils/TagForm";

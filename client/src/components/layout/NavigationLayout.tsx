@@ -7,7 +7,6 @@ import {
   Toolbar,
   Typography,
   MenuList,
-  MenuItem,
   Container,
 } from "@material-ui/core";
 

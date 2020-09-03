@@ -1,8 +1,7 @@
 import React, { FunctionComponent, useState, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
+import { Snackbar, IconButton } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import NavigationLayout from "../layout/NavigationLayout";
