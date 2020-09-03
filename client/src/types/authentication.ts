@@ -1,4 +1,5 @@
 export type LoginPageProps = {};
+export type RegistrationPageProps = {};
 export type HomePageProps = {};
 export type AppProps = {};
 

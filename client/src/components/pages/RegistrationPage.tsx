@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState, ChangeEvent } from "react";
-import { NavLink } from "react-router-dom";
 import NavigationLayout from "../layout/NavigationLayout";
 import styled from "styled-components";
 import {
@@ -13,8 +12,9 @@ import { useAuthProvider } from "../auth/AuthenticationProvider";
 import SendIcon from "@material-ui/icons/Send";
 import LockIcon from "@material-ui/icons/Lock";
 import EmailIcon from "@material-ui/icons/Email";
+import PersonIcon from "@material-ui/icons/Person";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
-import { LoginPageProps } from "../../types";
+import { RegistrationPageProps } from "../../types";
 
 const ButtonContainer = styled.div`
   padding: 1rem 0;
@@ -41,21 +41,16 @@ const RegistrationForm = styled.section`
   padding-bottom: 1rem;
 `;
 
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const LoginPage: FunctionComponent<LoginPageProps> = () => {
-  const { onLogin } = useAuthProvider();
+const RegistrationPage: FunctionComponent<RegistrationPageProps> = () => {
+  const { onRegister } = useAuthProvider();
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [isRegister, setIsRegister] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleLogin = (event: any) => {
+  const handleRegistration = (event: any) => {
     event.preventDefault();
-    onLogin({ email, password });
+    onRegister({ name, email, password });
   };
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -84,13 +79,33 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 
   return (
     <NavigationLayout>
-      <form className="form">
-        <Headline variant="h4">Login to your account</Headline>
+      <form className="form" noValidate>
+        <Headline variant="h4">Registration</Headline>
         <RegistrationForm>
+          <TextField
+            name="username"
+            label="Username"
+            onChange={handleNameChange}
+            value={name}
+            inputProps={{
+              autoComplete: "off",
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
           <TextField
             label="Email"
             onChange={handleEmailChange}
             value={email}
+            autoComplete="email"
+            inputProps={{
+              autoComplete: "off",
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -103,46 +118,31 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
             label="Password"
             onChange={handlePasswordChange}
             value={password}
+            autoComplete="new-password"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
                   <LockIcon />
                 </InputAdornment>
               ),
-              type: "password",
+            }}
+            inputProps={{
+              autoComplete: "off",
             }}
           />
-          <ButtonContainer>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleLogin}
-              startIcon={<SendIcon />}
-            >
-              Login
-            </Button>
-          </ButtonContainer>
-          <Divider />
-          <Headline>No account yet? Register here.</Headline>
-          <ButtonContainer>
-            <NavLink
-              to="/register"
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              <Button
-                color="primary"
-                variant="contained"
-                startIcon={<AssignmentIndIcon />}
-                style={{ width: "100%" }}
-              >
-                Register
-              </Button>
-            </NavLink>
-          </ButtonContainer>
+
+          <StyledButton
+            color="primary"
+            variant="contained"
+            startIcon={<SendIcon />}
+            onClick={handleRegistration}
+          >
+            Sign-up
+          </StyledButton>
         </RegistrationForm>
       </form>
     </NavigationLayout>
   );
 };
 
-export default LoginPage;
+export default RegistrationPage;

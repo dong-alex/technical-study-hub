@@ -15,6 +15,7 @@ import TagDashboardPage from "./components/pages/TagDashboardPage";
 import QuestionDashboardPage from "./components/pages/QuestionDashboardPage";
 import TagPage from "./components/pages/TagPage";
 import QuestionPage from "./components/pages/QuestionPage";
+import RegistrationPage from "./components/pages/RegistrationPage";
 import { AppProps } from "./types";
 import { DataProvider } from "./hooks/DataProvider";
 
@@ -45,7 +46,7 @@ const App: FunctionComponent<AppProps> = () => {
           <DynamicPrivateRoute
             authenticated={authenticated}
             path="/tags/:id"
-          component={TagPage}
+            component={TagPage}
           />
           <DynamicPrivateRoute
             authenticated={authenticated}
@@ -59,6 +60,7 @@ const App: FunctionComponent<AppProps> = () => {
               authenticated ? () => <Redirect to="/tags" /> : LoginPage
             }
           />
+          <Route path="/register" exact component={RegistrationPage} />
         </Switch>
       </Router>
     </DataProvider>
