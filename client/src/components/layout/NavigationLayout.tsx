@@ -89,11 +89,9 @@ const NavigationLayout: FunctionComponent<NavigationLayoutProps> = ({
                   Logout
                 </NavItem>
               ) : (
-                <>
-                  <NavItem to="/login">Login</NavItem>
-                  <NavItem to="/register">Register</NavItem>
-                </>
+                <NavItem to="/login">Login</NavItem>
               )}
+              {!authenticated && <NavItem to="/register">Register</NavItem>}
             </NavContainer>
           </StyledToolbar>
         </AppBar>
