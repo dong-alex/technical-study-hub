@@ -5,10 +5,7 @@ Client for handling technical questions and making connections
 2. ```yarn start```
 
 # Requirements
-- [] Create login page
-- [] Create authentication with Google
-- [] Dashboard for questions
-- [] Image uploader for the question
-- [] Labelling UI
-- [] Notes UI
-- [] Sidebars
+[x] Create login page
+[x] Dashboard for questions
+[x] Labelling UI
+[x] Notes UI
