@@ -10,9 +10,5 @@ To run locally
 # Requirements
 
 - [x] Base questions API
-- [] Proper validation
-- [] Implement image processing and storage for questions (Web scraping would require external computing resources)
-- [] Basic testing
-- [] Filter queries within API
-- [] Refactoring
-- [] Deploy publicly
+- [ ] Proper validation
+- [ ] Basic testing
